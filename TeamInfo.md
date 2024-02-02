@@ -10,8 +10,8 @@
 | Member1     |  avodela2@illinois.edu |
 | Member2     |      Sourya Sappa      |
 | Member2     |   ssapp4@illinois.edu  |
-| Member3     |                        |
-| Member3     |                        |
+| Member3     |      Divyam Arora      |
+| Member3     |  divyama3@illinois.edu |
 
 ## Project Information
 
