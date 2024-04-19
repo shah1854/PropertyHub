@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Attendance System</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+  <div class="container mt-4">
+    <div class="card">
+      <div class="card-body">
+        <h2>Please mark your attendance below</h2>
+        <form action="mark" method="POST">
+          <div class="form-group">
+            <label for="netid">Net ID</label>
+            <input type="text" class="form-control col-lg-9" id="netid" placeholder="Enter Net ID" name="netid">
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+        <!-- Button to Load Attendance -->
+        <button type="button" class="btn btn-info mt-3" id="loadAttendanceBtn" data-toggle="modal" data-target="#viewAttendanceModal">
+          View Attendance
+        </button>
+      </div>
+    </div>
+
+    <!-- Modal for Viewing Attendance -->
+    <div class="modal fade" id="viewAttendanceModal" tabindex="-1" role="dialog" aria-labelledby="viewAttendanceModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="viewAttendanceModalLabel">Attendance Records</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Net ID</th>
+                  <th scope="col">Present</th>
+                  <th scope="col">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="attendanceBody">
+                <!-- Attendance rows will be inserted here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  $(document).ready(function() {
+    $('#loadAttendanceBtn').click(function() {
+      $.ajax({
+        url: '/api/attendance',
+        method: 'GET',
+        success: function(data) {
+          var rows = '';
+          data.forEach(function(attendance, index) {
+            rows += `<tr>
+                       <th scope="row">${index + 1}</th>
+                       <td>${attendance.netid}</td>
+                       <td>${attendance.present}</td>
+                       <td>
+                         <button class="btn btn-warning btn-sm" data-netid="${attendance.netid}">Modify</button>
+                         <button class="btn btn-danger btn-sm" data-netid="${attendance.netid}">Delete</button>
+                       </td>
+                     </tr>`;
+          });
+          $('#attendanceBody').html(rows);
+        },
+        error: function() {
+          alert('Failed to load attendance data.');
+        }
+      });
+    });
+  });
+
+$(document).on('click', '.btn-warning', function() {
+        var netId = $(this).data('netid');
+        $.ajax({
+            url: '/api/attendance/modify/' + netId,
+            type: 'POST',
+            data: {
+                present: 0
+            },
+            success: function(response) {
+                alert('Attendance modified successfully for Net ID: ' + netId);
+                location.reload();
+            },
+            error: function() {
+                alert('Error modifying attendance for Net ID: ' + netId);
+            }
+        });
+    });
+
+    $(document).on('click', '.btn-danger', function() {
+        var netId = $(this).data('netid');
+        if(confirm('Are you sure you want to delete attendance for Net ID: ' + netId + '?')) {
+            $.ajax({
+                url: '/api/attendance/delete/' + netId,
+                type: 'DELETE',
+                success: function(response) {
+                    alert('Attendance deleted successfully for Net ID: ' + netId);
+                    location.reload();
+                },
+                error: function() {
+                    alert('Error deleting attendance for Net ID: ' + netId);
+                }
+            });
+        }
+    });
+  </script>
+</body>
+</html>
