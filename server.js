@@ -31,7 +31,7 @@ app.get('/success', function(req, res) {
       res.send({'message': 'Attendance marked successfully!'});
 });
  
-// this code is executed when a user clicks the form submit button
+// this code is executed when a user makes an account
 app.post('/mark', function(req, res) {
   var netid = req.body.netid;
    
@@ -106,4 +106,30 @@ app.delete('/api/attendance/delete/:id', function(req, res) {
 
 app.listen(80, function () {
     console.log('Node app is running on port 80');
+});
+
+//*****************PROPERTYHUB*****************
+// Function to add a new user to the Users table
+app.post('/api/users/create', function(req, res) {
+  // Extract user information from the request body
+  var { userName, password, favorites } = req.body;
+
+  // Ensure all required fields are provided
+  if (!userName || !password) {
+    return res.status(400).json({ message: 'Username and password are required' });
+  }
+
+  // Construct the SQL query to insert the new user
+  var sql = `INSERT INTO Users (userName, password, favorites) VALUES (?, ?, ?)`;
+  var values = [userName, password, favorites];
+
+  // Execute the SQL query
+  connection.query(sql, values, function(err, result) {
+    if (err) {
+      console.error('Error creating user:', err);
+      return res.status(500).json({ message: 'Error creating user', error: err });
+    }
+    // Send a success response
+    res.status(201).json({ message: 'User created successfully', userId: result.insertId });
+  });
 });
