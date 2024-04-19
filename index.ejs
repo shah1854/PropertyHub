@@ -9,7 +9,7 @@
     <h1>Welcome to Property Management System</h1>
     <button onclick="showProperties()">Show Properties</button>
     <div id="propertyList"></div>
-
+    
     <script>
         function showProperties() {
             fetch('/properties')
@@ -18,7 +18,7 @@
                 let propertyList = document.getElementById('propertyList');
                 propertyList.innerHTML = '';
                 data.forEach(property => {
-                    propertyList.innerHTML += <p>${property.PropertyId}: $${property.Price}</p>;
+                    propertyList.innerHTML += `<p>${property.PropertyId}: $${property.Price}</p>`;
                 });
             });
         }
