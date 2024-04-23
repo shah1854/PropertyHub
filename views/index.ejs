@@ -3,25 +3,179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Property Management System</title>
+    <title>Property Hub</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+        }
+        .header .logo {
+            font-size: 24px;
+            background-color: #00bfff;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .search-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .search-container input[type="text"],
+        .search-container select {
+            width: 80%;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .search-container p {
+            font-size: 18px;
+            margin-top: 20px;
+        }
+        .button {
+            padding: 10px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .add-listing {
+            background-color: #f8f8f8;
+        }
+        .login {
+            background-color: #f8f8f8;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to Property Management System</h1>
-    <button onclick="showProperties()">Show Properties</button>
-    <div id="propertyList"></div>
 
-    <script>
-        function showProperties() {
-            fetch('/properties')
+<div class="header">
+    <div class="button add-listing" onclick="showAddListingForm()">Add Listing</div>
+    <div class="logo">Property Hub</div>
+    <div class="button login">Login / Sign up</div>
+</div>
+
+<div class="search-container">
+    <input id="searchInput" type="text" placeholder="Enter Property ID">
+    <button onclick="searchProperties()" class="button">Search</button>
+    <p>Find your future home or sell your home today!</p>
+    <div id="propertyList"></div>
+</div>
+
+<div id="addListingForm" style="display: none;">
+    <h2>Add New Listing</h2>
+    <form onsubmit="addProperty(event)">
+        <label for="price">Price:</label><br>
+        <input type="text" id="priceInput" name="price" required><br>
+        <label for="squareFootage">Square Footage:</label><br>
+        <input type="text" id="squareFootageInput" name="squareFootage" required><br>
+        <label for="numBedrooms">Number of Bedrooms:</label><br>
+        <select id="numBedroomsInput" name="numBedrooms" required>
+            <option value="">Select</option>
+            <% for (let i = 0; i <= 10; i++) { %>
+                <option value="<%= i %>"><%= i %></option>
+            <% } %>
+        </select><br>
+        <label for="numBathrooms">Number of Bathrooms:</label><br>
+        <select id="numBathroomsInput" name="numBathrooms" required>
+            <option value="">Select</option>
+            <% for (let i = 0; i <= 10; i++) { %>
+                <option value="<%= i %>"><%= i %></option>
+            <% } %>
+        </select><br>
+        <label for="propertyType">Property Type:</label><br>
+        <select id="propertyTypeInput" name="propertyType" required>
+            <option value="">Select</option>
+            <option value="SINGLE_FAMILY_RESIDENTIAL">Single Family Residential</option>
+            <option value="CONDO_COOP">Condo/Coop</option>
+            <option value="TOWNHOUSE">Townhouse</option>
+            <option value="MULTI_FAMILY_2_TO_4">Multi-Family (2 to 4)</option>
+            <option value="MULTI_FAMILY_5_PLUS">Multi-Family (5 or more)</option>
+        </select><br>
+        <label for="yearBuilt">Year Built:</label><br>
+        <select id="yearBuiltInput" name="yearBuilt" required>
+            <option value="">Select</option>
+            <% for (let year = 1900; year <= 2024; year++) { %>
+                <option value="<%= year %>"><%= year %></option>
+            <% } %>
+        </select><br>
+        <input type="submit" value="Submit">
+    </form>
+</div>
+
+<script>
+    function showAddListingForm() {
+        document.getElementById('addListingForm').style.display = 'block';
+    }
+
+    function addProperty(event) {
+        event.preventDefault();
+        const price = document.getElementById('priceInput').value;
+        const squareFootage = document.getElementById('squareFootageInput').value;
+        const numBedrooms = document.getElementById('numBedroomsInput').value;
+        const numBathrooms = document.getElementById('numBathroomsInput').value;
+        const propertyType = document.getElementById('propertyTypeInput').value;
+        const yearBuilt = document.getElementById('yearBuiltInput').value;
+        const data = {
+            price: price,
+            squareFootage: squareFootage,
+            numBedrooms: numBedrooms,
+            numBathrooms: numBathrooms,
+            propertyType: propertyType,
+            yearBuilt: yearBuilt
+        };
+        fetch('/properties', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Failed to add property');
+                }
+            })
+            .then(result => {
+                alert('Property added successfully');
+                document.getElementById('addListingForm').reset();
+                document.getElementById('addListingForm').style.display = 'none';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to add property');
+            });
+    }
+
+    function searchProperties() {
+        const searchInput = document.getElementById('searchInput').value.trim();
+        fetch(`/properties?search=${searchInput}`)
             .then(response => response.json())
             .then(data => {
                 let propertyList = document.getElementById('propertyList');
                 propertyList.innerHTML = '';
-                data.forEach(property => {
-                    propertyList.innerHTML += <p>${property.PropertyId}: $${property.Price}</p>;
-                });
+                if (data.length === 0) {
+                    propertyList.innerHTML = '<p>No properties found.</p>';
+                } else {
+                    data.forEach(property => {
+                        propertyList.innerHTML += `<p>${property.propertyId}: $${property.price}</p>`;
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to fetch properties');
             });
-        }
-    </script>
+    }
+</script>
+
 </body>
 </html>

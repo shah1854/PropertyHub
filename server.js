@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const mysql = require('mysql2');
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = 80;
 
 // Database connection
 const db = mysql.createConnection({
@@ -28,21 +28,95 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// Route to fetch properties
-app.get('/properties', (req, res) => {
-    const sql = 'SELECT PropertyId, Price FROM Properties';
-    db.query(sql, (err, result) => {
-        if (err) throw err;
-        res.json(result);
-    });
-});
+// Serve static files (like index.ejs)
+app.use(express.static(__dirname + '/public'));
 
-// Serve index page
+// Route to serve index.ejs
 app.get('/', (req, res) => {
     res.render('index');
 });
 
+// CRUD operations for Properties
+
+// Create a property
+app.post('/properties', (req, res) => {
+    const { price, squareFootage, numBedrooms, numBathrooms, propertyType, yearBuilt } = req.body;
+    db.query('SELECT MAX(propertyId) AS maxId FROM Properties', (err, result) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        }
+
+        let nextPropertyId = result[0].maxId + 1;
+
+        const sql = 'INSERT INTO Properties (propertyId, price, squareFootage, numBedrooms, numBathrooms, propertyType, yearBuilt) VALUES (?, ?, ?, ?, ?, ?, ?)';
+        db.query(sql, [nextPropertyId, price, squareFootage, numBedrooms, numBathrooms, propertyType, yearBuilt], (err, result) => {
+            if (err) {
+                res.status(500).json({ error: err.message });
+            } else {
+                res.status(201).json({ message: 'Property added successfully' });
+            }
+        });
+    });
+});
+
+// Route to fetch properties
+app.get('/properties', (req, res) => {
+    const searchQuery = req.query.search;
+    let sql;
+    let values;
+
+    if (searchQuery) {
+        // If search query is provided, filter properties based on propertyId
+        sql = 'SELECT * FROM Properties WHERE PropertyId = ?';
+        values = [searchQuery];
+    } else {
+        // If no search query provided, fetch all properties
+        sql = 'SELECT * FROM Properties';
+        values = [];
+    }
+
+    db.query(sql, values, (err, results) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        }
+
+        res.json(results);
+    });
+});
+
+// Update a property
+app.put('/properties/:propertyId', (req, res) => {
+    const propertyId = req.params.propertyId;
+    const { price, squareFootage, numBedrooms, numBathrooms, propertyType, yearBuilt } = req.body;
+    const sql = 'UPDATE Properties SET price = ?, squareFootage = ?, numBedrooms = ?, numBathrooms = ?, propertyType = ?, yearBuilt = ? WHERE propertyId = ?';
+    db.query(sql, [price, squareFootage, numBedrooms, numBathrooms, propertyType, yearBuilt, propertyId], (err, result) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+        } else if (result.affectedRows === 0) {
+            res.status(404).json({ message: 'Property not found' });
+        } else {
+            res.json({ message: 'Property updated successfully' });
+        }
+    });
+});
+
+// Delete a property
+app.delete('/properties/:propertyId', (req, res) => {
+    const propertyId = req.params.propertyId;
+    db.query('DELETE FROM Properties WHERE propertyId = ?', propertyId, (err, result) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+        } else if (result.affectedRows === 0) {
+            res.status(404).json({ message: 'Property not found' });
+        } else {
+            res.json({ message: 'Property deleted successfully' });
+        }
+    });
+});
+
 // Start the server
-app.listen(80, () => {
-    console.log('Server is running on port 80');
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
 });
