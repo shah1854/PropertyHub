@@ -156,25 +156,38 @@
     }
 
     function searchProperties() {
-        const searchInput = document.getElementById('searchInput').value.trim();
-        fetch(`/properties?search=${searchInput}`)
-            .then(response => response.json())
-            .then(data => {
-                let propertyList = document.getElementById('propertyList');
-                propertyList.innerHTML = '';
-                if (data.length === 0) {
-                    propertyList.innerHTML = '<p>No properties found.</p>';
-                } else {
-                    data.forEach(property => {
-                        propertyList.innerHTML += `<p>${property.propertyId}: $${property.price}</p>`;
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Failed to fetch properties');
-            });
+    const searchInput = document.getElementById('searchInput').value.trim();
+    fetch(`/properties?search=${searchInput}`)
+        .then(response => response.json())
+        .then(data => {
+            let propertyList = document.getElementById('propertyList');
+            propertyList.innerHTML = '';
+            if (data.length === 0) {
+                propertyList.innerHTML = '<p>No properties found.</p>';
+            } else {
+                data.forEach(property => {
+                    // Display all attributes of the property
+                    propertyList.innerHTML += `
+                        <div class="property">
+                            <h3>Property ID: ${property.propertyId}</h3>
+                            <p>Price: $${property.price}</p>
+                            <p>Square Footage: ${property.squareFootage}</p>
+                            <p>Number of Bedrooms: ${property.numBedrooms}</p>
+                            <p>Number of Bathrooms: ${property.numBathrooms}</p>
+                            <p>Property Type: ${property.propertyType}</p>
+                            <p>Year Built: ${property.yearBuilt}</p>
+                        </div>
+                    `;
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to fetch properties');
+        });
     }
+    
+
 </script>
 
 </body>
