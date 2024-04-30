@@ -69,6 +69,66 @@ app.get('/', (req, res) => {
 app.get('/login', (req, res) => {
     res.render('login');
 });
+// existing database connection setup
+
+// existing middleware and routes setup
+
+
+app.post('/login', (req, res) => {
+    const { email, password } = req.body;
+    const sql = 'SELECT * FROM Users WHERE userName = ?';
+
+    db.query(sql, [email], (err, results) => {
+        if (err) {
+            console.error('Error during user login:', err);
+            res.status(500).send('Internal server error');
+            return;
+        }
+
+        if (results.length > 0) {
+            if (results[0].password === password) {
+                // On successful login, redirect to the home page
+                res.redirect('/');
+            } else {
+                // On password mismatch, redirect back to the login page with an error message
+                res.redirect('/login?error=PasswordIncorrect');
+            }
+        } else {
+            // If no user found, redirect back to the login page with an error message
+            res.redirect('/login?error=UserNotFound');
+        }
+    });
+});
+
+
+
+
+app.post('/signup', (req, res) => {
+    const { email, password, confirm_password, name } = req.body;
+
+    // Check if passwords match
+    if (password !== confirm_password) {
+        res.send("Passwords do not match.");
+        return;
+    }
+
+    // Insert the user directly into the database
+    const sql = 'INSERT INTO Users (userName, password, name) VALUES (?, ?, ?)';
+    db.query(sql, [email, password, name], (err, result) => {
+        if (err) {
+            console.error('Error during user registration:', err);
+            res.status(500).send('Error registering user.');
+            return;
+        }
+        // Redirect to login page after successful registration or any other page
+        res.redirect('/');
+    });
+});
+
+
+// existing CRUD operations for Properties
+
+// existing server start code
 
 // CRUD operations for Properties
 

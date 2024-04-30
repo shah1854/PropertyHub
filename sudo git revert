@@ -1,0 +1,149 @@
+[33mcommit fa8a16b2a41ae07ccfc9e36402940fe1a17c1ad7[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Mihir Shah <91684873+shah1854@users.noreply.github.com>
+Date:   Sun Apr 28 12:43:33 2024 -0500
+
+    Delete SQL/triggers.sql
+
+[33mcommit f7f3746a584b96e669315ad2fba6a0252adadcfa[m
+Author: Mihir Shah <91684873+shah1854@users.noreply.github.com>
+Date:   Thu Apr 25 20:36:39 2024 -0500
+
+    Delete SQL/temp
+
+[33mcommit 764d2ec2d19f67eb98c2ea597c8d7c89bce71308[m
+Author: Mihir Shah <91684873+shah1854@users.noreply.github.com>
+Date:   Thu Apr 25 20:36:17 2024 -0500
+
+    Create triggers.sql
+
+[33mcommit cd14c6d01f54eea8ab2c51ea3df3582116a570fe[m
+Author: Mihir Shah <91684873+shah1854@users.noreply.github.com>
+Date:   Thu Apr 25 20:35:10 2024 -0500
+
+    Create temp
+
+[33mcommit 44996458640a0ae281da168841291af19f219316[m
+Author: root <root@instance-20240412-172102.us-central1-a.c.team061.internal>
+Date:   Tue Apr 23 10:34:35 2024 +0000
+
+    delete listing done
+
+[33mcommit 7e57fc2d14a3d1a373ee8f9743708d934ac7cfe1[m
+Author: root <root@instance-20240412-172102.us-central1-a.c.team061.internal>
+Date:   Tue Apr 23 05:17:47 2024 +0000
+
+    fixed search
+
+[33mcommit 1febae1b0b8ac2f1f34d280eb1f055012d772588[m
+Author: root <root@instance-20240412-172102.us-central1-a.c.team061.internal>
+Date:   Tue Apr 23 04:30:01 2024 +0000
+
+    add listing working
+
+[33mcommit 3884f800974b0588c75543d489afbe968ac8655f[m
+Author: root <root@instance-20240412-172102.us-central1-a.c.team061.internal>
+Date:   Fri Apr 19 21:51:59 2024 +0000
+
+    test
+
+[33mcommit 9255a9f70a9f6e51b8dac3794bb2271d792a13de[m
+Author: shah1854 <shahmihirl07@gmail.com>
+Date:   Fri Apr 19 14:41:04 2024 -0500
+
+    added user creation feature
+
+[33mcommit ea80ec871b8ccaed21a37a97f5ffad694070c0c9[m
+Author: root <root@instance-20240412-172102.us-central1-a.c.team061.internal>
+Date:   Fri Apr 19 00:01:55 2024 +0000
+
+    test run
+
+[33mcommit 1c269a6173efa0da9fb0ede82bfb3a5485dfba3f[m
+Author: Mihir Shah <91684873+shah1854@users.noreply.github.com>
+Date:   Thu Apr 18 17:46:45 2024 -0500
+
+    Update README.md
+
+[33mcommit b931c9cd7a505c34b5e89fa44cd2969dc581a361[m[33m ([m[1;33mtag: stage.3[m[33m)[m
+Author: avode30 <116709058+avode30@users.noreply.github.com>
+Date:   Mon Apr 8 22:49:28 2024 -0500
+
+    Add files via upload
+
+[33mcommit ff75a7e1f75b4970400ec13cad4a302481b68b0c[m
+Author: avode30 <116709058+avode30@users.noreply.github.com>
+Date:   Sun Apr 7 13:23:01 2024 -0500
+
+    Add files via upload
+
+[33mcommit 4ba7065106eab815efc444a62baeeca7d95f1ce7[m[33m ([m[1;33mtag: stage.2[m[33m)[m
+Author: avode30 <116709058+avode30@users.noreply.github.com>
+Date:   Mon Feb 26 22:06:11 2024 -0600
+
+    Add files via upload
+
+[33mcommit 7c8dfa49375e258175b4c4c706e7842a070d4d9b[m
+Author: Mihir Shah <91684873+shah1854@users.noreply.github.com>
+Date:   Mon Feb 26 18:08:34 2024 -0600
+
+    Update TeamInfo.md
+
+[33mcommit 3801d6e5531429c477e16023045e5cefb4c892c1[m
+Author: Mihir Shah <91684873+shah1854@users.noreply.github.com>
+Date:   Mon Feb 26 18:07:07 2024 -0600
+
+    Delete docs/Project Proposal
+
+[33mcommit 3d32ba7dbbc6de7aa8ad744a6eb62b0555967761[m[33m ([m[1;33mtag: stage.1[m[33m)[m
+Author: avode30 <116709058+avode30@users.noreply.github.com>
+Date:   Wed Feb 7 23:36:09 2024 -0600
+
+    Add files via upload
+
+[33mcommit 457df16d313e53709a08ad24106b82c4da8db4ef[m
+Author: Mihir Shah <91684873+shah1854@users.noreply.github.com>
+Date:   Wed Feb 7 18:16:41 2024 -0600
+
+    Delete docs/Note Feb 7, 2024.pdf
+
+[33mcommit 5b2bd914baa89dd5dca57aa057e96c0941c525b8[m
+Author: Mihir Shah <91684873+shah1854@users.noreply.github.com>
+Date:   Wed Feb 7 18:16:18 2024 -0600
+
+    Add files via upload
+
+[33mcommit 12dd9067f91d59a0baa831fc7fbbc747bb99acaa[m
+Author: Mihir Shah <91684873+shah1854@users.noreply.github.com>
+Date:   Wed Feb 7 17:02:38 2024 -0600
+
+    Create Project Proposal
+
+[33mcommit e10df9d725ff4878d7436d35347c2e94838cbb0a[m
+Author: Mihir Shah <91684873+shah1854@users.noreply.github.com>
+Date:   Fri Feb 2 13:12:31 2024 -0600
+
+    Update TeamInfo.md
+
+[33mcommit f55675b8d729fafb8d998467dffe7f63f0f23c92[m[33m ([m[1;33mtag: stage.0[m[33m)[m
+Author: Mihir Shah <91684873+shah1854@users.noreply.github.com>
+Date:   Tue Jan 30 17:16:43 2024 -0600
+
+    Create TeamInfo.md
+
+[33mcommit 9c69c03469c689a107e9de393dae61b0e9a983c0[m
+Author: Mihir Shah <91684873+shah1854@users.noreply.github.com>
+Date:   Tue Jan 30 17:10:57 2024 -0600
+
+    Update README.md
+
+[33mcommit ccd97227e4bf313cfca8001051e343cf733a312e[m
+Author: Mihir Shah <91684873+shah1854@users.noreply.github.com>
+Date:   Tue Jan 30 17:10:13 2024 -0600
+
+    Update README.md
+
+[33mcommit 3e4a0837f2f84ba61896d91776929f5869620155[m
+Author: Mihir Shah <91684873+shah1854@users.noreply.github.com>
+Date:   Tue Jan 30 17:02:38 2024 -0600
+
+    Initial commit

@@ -65,5 +65,52 @@
 
 <a href="/" class="home-link">Return to Home</a>
 
+<form id="loginForm">
+    <input type="email" name="email" placeholder="Email Address" required>
+    <input type="password" name="password" placeholder="Password" required>
+    <button type="submit">Login</button>
+</form>
+<div id="loginResult" style="display: none;"></div> <!-- Placeholder for login result message -->
+
+<script>
+document.getElementById('loginForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent the default form submission
+
+    var formData = new FormData(this);
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/login', true);
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            // Show result in a pop-up
+            alert(xhr.responseText);
+            // Redirect to home on successful login
+            if (xhr.responseText.includes("successful")) {
+                window.location.href = '/';
+            }
+        } else {
+            alert('Request failed.  Returned status of ' + xhr.status);
+        }
+    };
+    xhr.send(formData);
+});
+</script>
+
+<script>
+    window.onload = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const error = urlParams.get('error');
+        if (error) {
+            let message = '';
+            if (error === 'PasswordIncorrect') {
+                message = 'Login failed: Incorrect password.';
+            } else if (error === 'UserNotFound') {
+                message = 'Login failed: User not found.';
+            }
+            alert(message); // Or display this message in the HTML
+        }
+    };
+</script>
+
+
 </body>
 </html>
