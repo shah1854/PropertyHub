@@ -36,6 +36,9 @@ app.get('/', (req, res) => {
     res.render('index');
 });
 
+app.get('/login', (req, res) => {
+    res.render('login');
+});
 // CRUD operations for Properties
 
 // Create a property

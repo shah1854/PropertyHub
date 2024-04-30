@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login/Sign Up</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      flex-direction: column;
+    }
+    .form-container {
+      margin: 20px;
+    }
+    form {
+      margin-bottom: 20px;
+    }
+    input[type='text'],
+    input[type='email'],
+    input[type='password'] {
+      margin-bottom: 10px;
+      width: 200px;
+      padding: 8px;
+    }
+    .btn {
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+    .home-link {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 8px;
+      text-decoration: none;
+      color: black;
+      background: #f3f3f3;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="form-container">
+  <h2>Login</h2>
+  <form action="/login" method="post">
+    <input type="email" name="email" placeholder="Email Address" required>
+    <input type="password" name="password" placeholder="Password" required>
+    <button type="submit" class="btn">Login</button>
+  </form>
+</div>
+
+<div class="form-container">
+  <h2>Sign Up</h2>
+  <form action="/signup" method="post">
+    <input type="email" name="email" placeholder="Email Address" required>
+    <input type="password" name="password" placeholder="Password" required>
+    <input type="password" name="confirm_password" placeholder="Confirm Password" required>
+    <input type="text" name="name" placeholder="Name" required>
+    <button type="submit" class="btn">Sign Up</button>
+  </form>
+</div>
+
+<a href="/" class="home-link">Return to Home</a>
+
+</body>
+</html>
