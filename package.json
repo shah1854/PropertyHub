@@ -6,6 +6,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "axios": "^1.6.8",
     "body-parser": "^1.20.2",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
@@ -14,6 +15,7 @@
     "http-errors": "~1.6.3",
     "morgan": "~1.9.1",
     "mysql2": "^3.9.6",
+    "node-geocoder": "^4.3.0",
     "path": "^0.12.7"
   }
 }
