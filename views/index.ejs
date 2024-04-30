@@ -62,6 +62,10 @@
             background-color: #f8f8f8;
         }
         
+        .update-listing {
+            background-color: #f8f8f8;
+        }
+        
         .login {
             background-color: #f8f8f8;
         }
@@ -71,9 +75,6 @@
             position: absolute;
             background-color: #f9f9f9;
         }
-
-
-        
     </style>
 </head>
 <body>
@@ -85,6 +86,7 @@
             <div class="dropdown-content" id="manageListingsDropdown">
                 <div class="button add-listing" onclick="showAddListingForm()">Add Listing</div>
                 <div class="button delete-listing" onclick="showDeleteListingForm()">Delete Listing</div>
+                <div class="button update-listing" onclick="showUpdateListingForm()">Update Listing</div>
             </div>
         </div>
     </div>
@@ -237,13 +239,14 @@
                     // Display all attributes of the property
                     propertyList.innerHTML += `
                         <div class="property">
-                            <h3>Property ID: ${property.propertyId}</h3>
+                            <h3><p>${property.address}</p></h3>
                             <p>Price: $${property.price}</p>
                             <p>Square Footage: ${property.squareFootage}</p>
                             <p>Number of Bedrooms: ${property.numBedrooms}</p>
                             <p>Number of Bathrooms: ${property.numBathrooms}</p>
                             <p>Property Type: ${property.propertyType}</p>
                             <p>Year Built: ${property.yearBuilt}</p>
+			    <hr>
                         </div>
                     `;
                 });
@@ -254,6 +257,7 @@
             alert('Failed to fetch properties');
         });
     }
+
     
     function showDeleteListingForm() {
     const deleteForm = document.getElementById('deleteListingForm');
