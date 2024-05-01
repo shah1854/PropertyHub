@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .welcome-message {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .logout-btn {
+            padding: 10px 20px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="welcome-message">
+            Welcome, <%= username %>!
+        </div>
+        <p>This is your user page.</p>
+        <p>You can add content here that is specific to the user.</p>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+
+    <script>
+        function logout() {
+            // Perform logout actions here
+            alert('Logging out...');
+            // Redirect to login page or perform any other necessary actions
+            window.location.href = '/login';
+        }
+    </script>
+</body>
+</html>

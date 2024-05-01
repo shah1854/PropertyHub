@@ -63,11 +63,17 @@ app.use(express.static(__dirname + '/public'));
 
 // Route to serve index.ejs
 app.get('/', (req, res) => {
-    res.render('index');
+    const username = req.query.username;
+    res.render('index', { username });
 });
 
 app.get('/login', (req, res) => {
     res.render('login');
+});
+
+app.get('/user', (req, res) => {
+    const username = req.query.username;
+    res.render('user', { username });
 });
 // existing database connection setup
 
@@ -87,8 +93,8 @@ app.post('/login', (req, res) => {
 
         if (results.length > 0) {
             if (results[0].password === password) {
-                // On successful login, redirect to the home page
-                res.redirect('/');
+                // On successful login, redirect to the home page with username
+                res.redirect('/?username=' + results[0].Name);
             } else {
                 // On password mismatch, redirect back to the login page with an error message
                 res.redirect('/login?error=PasswordIncorrect');
@@ -99,6 +105,7 @@ app.post('/login', (req, res) => {
         }
     });
 });
+
 
 
 
@@ -120,10 +127,11 @@ app.post('/signup', (req, res) => {
             res.status(500).send('Error registering user.');
             return;
         }
-        // Redirect to login page after successful registration or any other page
-        res.redirect('/');
+        // Redirect to home page after successful registration with username
+        res.redirect('/?username=' + name);
     });
 });
+
 
 
 // existing CRUD operations for Properties
@@ -225,6 +233,8 @@ app.delete('/properties/:propertyId', (req, res) => {
         }
     });
 });
+
+
 
 // Start the server
 app.listen(port, () => {

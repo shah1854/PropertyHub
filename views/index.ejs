@@ -69,6 +69,10 @@
             background-color: #f8f8f8;
         }
         
+        .username {
+            background-color: #f8f8f8;
+        }
+        
         .dropdown-content {
             display: none;
             position: absolute;
@@ -112,6 +116,11 @@
         </div>
     </div>
     <div class="logo">Property Hub</div>
+    <% if (typeof locals.username !== 'undefined' && locals.username !== null) { %>
+        <div class="button username" onclick="redirectToUserPage('<%= locals.username %>')">Welcome, <%= locals.username %></div>
+    <% } %>
+
+
     <div class="button login" onclick="location.href='/login'">Login / Sign up</div>
 </div>
 
@@ -366,6 +375,10 @@
                 console.error('Error:', error);
                 alert('Failed to delete property');
             });
+    }
+    
+    function redirectToUserPage(username) {
+        window.location.href = '/user?username=' + encodeURIComponent(username);
     }
 
     
