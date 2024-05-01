@@ -232,16 +232,28 @@ app.put('/properties/:propertyId', (req, res) => {
 // Delete a property
 app.delete('/properties/:propertyId', (req, res) => {
     const propertyId = req.params.propertyId;
-    db.query('DELETE FROM Properties WHERE propertyId = ?', propertyId, (err, result) => {
+    const userId = req.query.userid; // Retrieve userId from query string if available
+
+    db.query('DELETE FROM UserListings WHERE propertyId = ? AND userId = ?', [propertyId, userId], (err, result) => {
         if (err) {
             res.status(500).json({ error: err.message });
         } else if (result.affectedRows === 0) {
-            res.status(404).json({ message: 'Property not found' });
+            res.status(404).json({ message: 'Property not found for the user' });
         } else {
-            res.json({ message: 'Property deleted successfully' });
+            // If the UserListings entry is deleted successfully, delete the property entry as well
+            db.query('DELETE FROM Properties WHERE propertyId = ?', propertyId, (err, result) => {
+                if (err) {
+                    res.status(500).json({ error: err.message });
+                } else if (result.affectedRows === 0) {
+                    res.status(404).json({ message: 'Property not found' });
+                } else {
+                    res.json({ message: 'Property deleted successfully' });
+                }
+            });
         }
     });
 });
+
 
 app.post('/user/listings', (req, res) => {
     const { userId, propertyId } = req.body;
