@@ -8,7 +8,6 @@
         body {
             font-family: Arial, sans-serif;
         }
-        
         .header {
             display: flex;
             justify-content: space-between;
@@ -91,7 +90,28 @@
         }
 
 
+        .price-indicator {
+    padding: 5px 10px;
+    color: white;
+    font-weight: bold;
+    border-radius: 5px;
+    margin-top: 10px;
+}
 
+.good-price {
+    background-color: green;
+}
+
+.fair-price {
+    background-color: yellow;
+    color: black; /* Ensure visibility on light backgrounds */
+}
+
+.bad-price {
+    background-color: red;
+}
+
+         
         .search-bar {
     display: flex; /* This will align all children elements (inputs and selects) in a row */
     /* flex-wrap: wrap; Allows the elements to wrap into the next line if the screen width is too small */
@@ -256,6 +276,41 @@
         <input type="submit" value="Submit">
     </form>
 </div>
+
+<script>
+// JavaScript code from the previous response here
+properties.forEach(property => {
+    const propertyContainer = document.createElement('div');
+    propertyContainer.className = 'property';
+    propertyContainer.innerHTML = `
+        <h3>${property.address}</h3>
+        <p>Price: $${property.price}</p>
+        <p>Square Footage: ${property.squareFootage}</p>
+        <p>Number of Bedrooms: ${property.numBedrooms}</p>
+        <p>Number of Bathrooms: ${property.numBathrooms}</p>
+        <p>Property Type: ${property.propertyType}</p>
+        <p>Year Built: ${property.yearBuilt}</p>
+        <div class="value-indicator ${getValueIndicatorClass(property.priceComparison)}">${property.priceComparison}</div>
+    `;
+    document.getElementById('propertyList').appendChild(propertyContainer);
+});
+
+function getValueIndicatorClass(valueComparison) {
+    switch (valueComparison) {
+        case 'Bad Value':
+            return 'low-price';
+        case 'Good Value':
+            return 'high-price';
+        default:
+            return 'medium-price'; // Assume fair value
+    }
+}
+</script>
+</body>
+
+
+
+
 
 <script>
     document.addEventListener("click", function(event) {
@@ -478,3 +533,4 @@
 
 </body>
 </html>
+
