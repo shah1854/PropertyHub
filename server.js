@@ -217,7 +217,7 @@ app.get('/properties', async (req, res) => {
                     // For each property, perform reverse geocoding
                     for (let i = 0; i < results[0].length; i++) {
                         const property = results[0][i];
-                        const reverseGeocodeResult = await geocoder.reverse({ lat: property.latitude, lon: property.latitude });
+                        const reverseGeocodeResult = await geocoder.reverse({ lat: property.latitude, lon: property.longitude });
                         if (reverseGeocodeResult.length > 0) {
                             // Assuming the first result contains the street address
                             property.address = reverseGeocodeResult[0].formattedAddress;
@@ -225,17 +225,6 @@ app.get('/properties', async (req, res) => {
                             property.address = 'Address not found';
                         }
                     }
-                    // db.query('CALL ComparePropertyPriceToAverage(?, ?)', [property.latitude, property.latitude], (err, results) => {
-                    //     if (err) {
-                    //         console.error('Error executing stored procedure:', err);
-                    //         res.status(500).json({ error: 'Error executing stored procedure' });
-                    //         return;
-                    //     }
-                        
-                    //     // Extract the result from the stored procedure
-                    //     const properties = results[0]; // Assuming the properties result set is the second one
-                    //     res.json({ properties });
-                    // });
                     res.json(results[0]); // Assuming the properties are returned as the first result set
                 }
             });
@@ -248,9 +237,6 @@ app.get('/properties', async (req, res) => {
         res.status(500).json({ error: 'Error getting coordinates' });
     }
 });
-
-
-
 
 
 
