@@ -166,13 +166,6 @@ app.post('/signup', (req, res) => {
     });
 });
 
-
-
-
-// existing CRUD operations for Properties
-
-// existing server start code
-
 // CRUD operations for Properties
 // Create a property
 app.post('/properties', (req, res) => {
@@ -256,6 +249,7 @@ app.put('/properties/:propertyId', (req, res) => {
 });
 
 // Delete a property
+
 app.delete('/properties/:propertyId', (req, res) => {
     const propertyId = req.params.propertyId;
     const userId = req.query.userid; // Retrieve userId from query string if available
@@ -263,20 +257,38 @@ app.delete('/properties/:propertyId', (req, res) => {
     db.query('DELETE FROM UserListings WHERE propertyId = ? AND userId = ?', [propertyId, userId], (err, result) => {
         if (err) {
             res.status(500).json({ error: err.message });
-        } else if (result.affectedRows === 0) {
-            res.status(404).json({ message: 'Property not found for the user' });
         } else {
             // If the UserListings entry is deleted successfully, delete the property entry as well
             db.query('DELETE FROM Properties WHERE propertyId = ?', propertyId, (err, result) => {
                 if (err) {
                     res.status(500).json({ error: err.message });
+                } else if (result.affectedRows === 0) {
+                    res.status(404).json({ message: 'Property not found' });
                 } else {
-                    res.status(200).json({ message: 'Property removed from favorites successfully' });
+                    res.json({ message: 'Property deleted successfully' });
                 }
             });
         }
     });
 });
+
+
+// Delete a listing
+app.delete('/user/listings/:propertyId', (req, res) => {
+    const propertyId = req.params.propertyId;
+    const userId = req.query.userid; // Assuming userId is passed as a query parameter
+
+    db.query('DELETE FROM UserListings WHERE propertyId = ? AND userId = ?', [propertyId, userId], (err, result) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+        } else if (result.affectedRows === 0) {
+            res.status(404).json({ message: 'Listing not found' });
+        } else {
+            res.json({ message: 'Listing deleted successfully' });
+        }
+    });
+});
+
 
 
 app.post('/user/listings', (req, res) => {
@@ -293,6 +305,8 @@ app.post('/user/listings', (req, res) => {
         res.status(201).json({ message: 'Listing added to UserListings successfully' });
     });
 });
+
+
 
 // Route to fetch user listings
 app.get('/user/listings', (req, res) => {
@@ -312,9 +326,6 @@ app.get('/user/listings', (req, res) => {
     });
 });
 
-
-
-
 app.post('/user/address', async (req, res) => {
     const { streetAddress, city, state, zipcode, propertyId} = req.body;
     const address = `${streetAddress}, ${city}, ${state} ${zipcode}`;
@@ -323,15 +334,37 @@ app.post('/user/address', async (req, res) => {
         if (coordinates) {
             const { latitude, longitude } = coordinates;
             console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
-            const sql = 'INSERT INTO Address (latitude, longitude, city, state, zip, propertyId) VALUES (?, ?, ?, ?, ?, ?)';
-            db.query(sql, [latitude, longitude, city, state, zipcode, propertyId], (err, result) => {
+            // Begin a transaction
+            db.beginTransaction(async (err) => {
                 if (err) {
-                    res.status(500).json({ error: err.message });
-                } else {
-                    res.status(201).json({ propertyId: propertyId }); // Send back the propertyId in the response
+                    console.error('Error beginning transaction:', err);
+                    res.status(500).json({ error: 'Internal server error' });
+                    return;
+                }
+                try {
+                    const insertAddressQuery = 'INSERT INTO Address (latitude, longitude, city, state, zip, propertyId) VALUES (?, ?, ?, ?, ?, ?)';
+                    // Insert address into the Address table
+                    await db.promise().query(insertAddressQuery, [latitude, longitude, city, state, zipcode, propertyId]);
+                    // Commit the transaction if everything is successful
+                    db.commit((err) => {
+                        if (err) {
+                            console.error('Error committing transaction:', err);
+                            res.status(500).json({ error: 'Internal server error' });
+                        } else {
+                            res.status(201).json({ propertyId: propertyId }); // Send back the propertyId in the response
+                        }
+                    });
+                } catch (error) {
+                    // Roll back the transaction if any error occurs during address insertion
+                    db.rollback((rollbackErr) => {
+                        if (rollbackErr) {
+                            console.error('Error rolling back transaction:', rollbackErr);
+                        }
+                        console.error('Error during transaction:', error);
+                        res.status(500).json({ error: 'Error during transaction' });
+                    });
                 }
             });
-
         } else {
             console.log('Address not found');
             res.status(404).json({ error: 'Address not found' });
@@ -341,6 +374,7 @@ app.post('/user/address', async (req, res) => {
         res.status(500).json({ error: 'Error getting coordinates' });
     }
 });
+
 
 app.get('/user/favorites', (req, res) => {
     const userId = req.query.userid; // Retrieve userId from query string if available
@@ -383,9 +417,6 @@ app.delete('/user/favorites/:propertyId', (req, res) => {
         }
     });
 });
-
-
-
 
 // Start the server
 app.listen(port, () => {
