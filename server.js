@@ -164,7 +164,7 @@ app.post('/properties', (req, res) => {
 
 
 app.get('/properties', async (req, res) => {
-    const { search } = req.query;
+    const { search, distance, minPrice, maxPrice, bathrooms, bedrooms, propertyType, yearBuilt} = req.query;
     try {
         const coordinates = await getCoordinates(search);
         if (coordinates) {
@@ -172,7 +172,9 @@ app.get('/properties', async (req, res) => {
             console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
             
             // Call stored procedure to fetch properties within 10-mile radius
-            db.query('CALL GetPropertiesWithinDistance(?, ?, ?)', [latitude, longitude, 10], async (err, results) => {
+            db.query('CALL GetPropertiesWithinDistance(?, ?, ?, ?, ?, ?, ?, ?, ?)', [latitude, longitude, distance || 10, minPrice || 0, maxPrice || 500000000, 
+                    bathrooms || null, bedrooms || null, propertyType || null, 
+                    yearBuilt || null], async (err, results) => {
                 if (err) {
                     console.error(err);
                     res.status(500).json({ error: 'Error fetching properties within distance' });
@@ -200,6 +202,9 @@ app.get('/properties', async (req, res) => {
         res.status(500).json({ error: 'Error getting coordinates' });
     }
 });
+
+
+
 
 
 
