@@ -7,39 +7,83 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
         }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
+
+        .header {
+            background-color: #00bfff;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            position: relative;
         }
-        .welcome-message {
+
+        .logo {
             font-size: 24px;
-            margin-bottom: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            position: center;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
         }
+
+        .button-container-right {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            right: 20px;
+        }
+        .button-container-left {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 20px;
+        }
+
         .button {
             padding: 10px 20px;
             margin-right: 10px;
-            background-color: #4CAF50;
+            background-color: #e3b037;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
         }
+
         .button.logout {
-            background-color: #f44336;
+            background-color: #e3b037;
+        }
+
+        .welcome-message {
+            font-size: 36px;
+            font-weight: bold;
+            margin-top: 60px;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-    <div class="welcome-message">
-        Welcome, <%= username %>!
+    <div class="header">
+        <div class="logo">Property Hub</div>
+        <div class="button-container-left">
+            <button class="button" onclick="backToHome()">Back to Home</button>
+        </div>
+        <div class="button-container-right">
+            <button class="button logout" onclick="logout()">Logout</button>
+        </div>
+        <div class="welcome-message">Welcome, <%= username %>!</div>
     </div>
-    <p>This is your user page.</p>
-    <p>You can manage your listings here.</p>
-    <button class="button" onclick="backToHome()">Back to Home</button>
-    <button class="button logout" onclick="logout()">Logout</button>
+    <div class="container">
+        <p>This is your user page.</p>
+        <p>You can manage your listings here.</p>
     <button class="button" onclick="viewListings()">View Listings</button>
     <button class="button" onclick="viewFavorites()">View Favorites</button>
 
