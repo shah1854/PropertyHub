@@ -79,6 +79,16 @@
             position: absolute;
             background-color: #f9f9f9;
         }
+        .property-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px; /* Add some space between property containers */
+        }
+
+        .property {
+            flex-grow: 1; /* Property details take up remaining space */
+        }
 
 
 
@@ -360,20 +370,38 @@
                 propertyList.innerHTML = '<p>No properties found.</p>';
             } else {
                 data.forEach(property => {
-                    // Display all attributes of the property
-                    propertyList.innerHTML += `
-                        <div class="property">
-                            <h3><p>${property.address}</p></h3>
-                            <p>Price: $${property.price}</p>
-                            <p>Square Footage: ${property.squareFootage}</p>
-                            <p>Number of Bedrooms: ${property.numBedrooms}</p>
-                            <p>Number of Bathrooms: ${property.numBathrooms}</p>
-                            <p>Property Type: ${property.propertyType}</p>
-                            <p>Year Built: ${property.yearBuilt}</p>
-			    <hr>
-                        </div>
-                    `;
-                });
+            // Create a container for each property and its buttons
+            const propertyContainer = document.createElement('div');
+            propertyContainer.classList.add('property-container');
+
+            // Add property details to the container
+            propertyContainer.innerHTML = `
+                <div class="property">
+                    <h3><p>${property.address}</p></h3>
+                    <p>Price: $${property.price}</p>
+                    <p>Square Footage: ${property.squareFootage}</p>
+                    <p>Number of Bedrooms: ${property.numBedrooms}</p>
+                    <p>Number of Bathrooms: ${property.numBathrooms}</p>
+                    <p>Property Type: ${property.propertyType}</p>
+                    <p>Year Built: ${property.yearBuilt}</p>
+                </div>
+            `;
+
+            // Create buttons for each property
+
+            const favoriteButton = document.createElement('button');
+            favoriteButton.textContent = 'Add to Favorites';
+            favoriteButton.classList.add('button');
+            favoriteButton.addEventListener('click', () => addFavorite(property.propertyId));
+
+            // Append buttons to the property container
+            propertyContainer.appendChild(favoriteButton);
+
+            // Append the property container to the property list
+            propertyList.appendChild(propertyContainer);
+        });
+
+
             }
         })
         .catch(error => {
@@ -417,6 +445,31 @@
         const url = '/user?username=' + encodeURIComponent(username) + '&userid=' + encodeURIComponent(userid);
         console.log('Generated URL:', url);
         window.location.href = url;
+    }
+
+    function addFavorite(propertyId) {
+        // Make a POST request to /user/favorites endpoint with the propertyId
+        fetch('/user/favorites', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ userId: '<%= locals.userid %>', propertyId: propertyId })
+        })
+            .then(response => {
+                if (response.ok) {
+                    // If the request is successful, alert the user
+                    alert('Property added to favorites successfully');
+                } else {
+                    // If there is an error, alert the user
+                    alert('Failed to add property to favorites Need ot Login');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // If there is an error, alert the user
+                alert('Failed to add property to favorites Need to Login');
+            });
     }
 
     
