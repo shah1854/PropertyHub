@@ -228,7 +228,7 @@ app.get('/properties', async (req, res) => {
                         }
                     }
                     // For each property, get the price rating
-                    const properties = results[0];
+                    const properties = results[1];
                     for (let property of properties) {
                         await db.promise().query('CALL ComparePropertyPriceToAverage(?, ?)', [latitude, longitude])
                             .then((ratingResults) => {
