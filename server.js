@@ -144,8 +144,6 @@ app.post('/user/favorites', (req, res) => {
 });
 
 
-
-
 app.post('/signup', (req, res) => {
     const { email, password, confirm_password, name } = req.body;
 
@@ -272,10 +270,8 @@ app.delete('/properties/:propertyId', (req, res) => {
             db.query('DELETE FROM Properties WHERE propertyId = ?', propertyId, (err, result) => {
                 if (err) {
                     res.status(500).json({ error: err.message });
-                } else if (result.affectedRows === 0) {
-                    res.status(404).json({ message: 'Property not found' });
                 } else {
-                    res.json({ message: 'Property deleted successfully' });
+                    res.status(200).json({ message: 'Property removed from favorites successfully' });
                 }
             });
         }
