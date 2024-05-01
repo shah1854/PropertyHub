@@ -417,22 +417,7 @@ function getValueIndicatorClass(valueComparison) {
             } else {
                 property.rating = null;
                 data.forEach(property => {
-                    fetch('/comparePropertyPriceToAverage', {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ centerLat:property.latitude, centerLng:property.longitude })
-                    }).then(response => {
-                        if (response.ok) {
-                        return repsonse.json();
-                        } else {
-                            throw new Error('Failed to get rating');
-                        }
-                    }).then(result => {
-                        property.rating = result[0];
-                        console.log(property.rating);
-                    });
+                    property.rating = checkRating(property);
                     // Create a container for each property and its buttons
                     const propertyContainer = document.createElement('div');
                     propertyContainer.classList.add('property-container');
@@ -477,6 +462,25 @@ function getValueIndicatorClass(valueComparison) {
     function showDeleteListingForm() {
     const deleteForm = document.getElementById('deleteListingForm');
     deleteForm.style.display = 'block';
+    }
+
+    function checkRating(property) {
+        fetch('/comparePropertyPriceToAverage', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ centerLat:property.latitude, centerLng:property.longitude })
+        }).then(response => {
+            if (response.ok) {
+            return repsonse.json();
+            } else {
+                throw new Error('Failed to get rating');
+            }
+        }).then(result => {
+            console.log(property.rating);
+            return result[0];
+        });
     }
 
     function deleteProperty(event) {
