@@ -388,10 +388,6 @@
             `;
 
             // Create buttons for each property
-            const searchButton = document.createElement('button');
-            searchButton.textContent = 'Search';
-            searchButton.classList.add('button');
-            searchButton.addEventListener('click', () => searchProperties());
 
             const favoriteButton = document.createElement('button');
             favoriteButton.textContent = 'Add to Favorites';
@@ -467,13 +463,13 @@
                     alert('Property added to favorites successfully');
                 } else {
                     // If there is an error, alert the user
-                    alert('Failed to add property to favorites');
+                    alert('Failed to add property to favorites -- Need to Login');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
                 // If there is an error, alert the user
-                alert('Failed to add property to favorites');
+                alert('Failed to add property to favorites -- Need to Login');
             });
     }
 
