@@ -142,7 +142,6 @@ app.post('/signup', (req, res) => {
 // existing server start code
 
 // CRUD operations for Properties
-
 // Create a property
 app.post('/properties', (req, res) => {
     const { price, squareFootage, numBedrooms, numBathrooms, propertyType, yearBuilt } = req.body;
@@ -159,11 +158,12 @@ app.post('/properties', (req, res) => {
             if (err) {
                 res.status(500).json({ error: err.message });
             } else {
-                res.status(201).json({ message: 'Property added successfully' });
+                res.status(201).json({ propertyId: nextPropertyId }); // Send back the propertyId in the response
             }
         });
     });
 });
+
 
 
 app.get('/properties', async (req, res) => {
