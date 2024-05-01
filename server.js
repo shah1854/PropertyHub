@@ -126,6 +126,22 @@ app.post('/user/favorites', (req, res) => {
     });
 });
 
+app.get('/comparePropertyPriceToAverage', (req, res) => {
+    const { centerLat, centerLng } = req.query;
+
+    // Execute the stored procedure
+    db.query('CALL ComparePropertyPriceToAverage(?, ?)', [centerLat, centerLng], (err, results) => {
+        if (err) {
+            console.error('Error executing stored procedure:', err);
+            res.status(500).json({ error: 'Error executing stored procedure' });
+            return;
+        }
+        
+        // Extract the result from the stored procedure
+        const properties = results[1]; // Assuming the properties result set is the second one
+        res.json({ properties });
+    });
+});
 
 
 app.post('/signup', (req, res) => {
