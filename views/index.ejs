@@ -370,6 +370,7 @@
                             <p>Number of Bathrooms: ${property.numBathrooms}</p>
                             <p>Property Type: ${property.propertyType}</p>
                             <p>Year Built: ${property.yearBuilt}</p>
+                            <button onclick="addFavorite(${property.propertyId})">Add to Favorites</button>
 			    <hr>
                         </div>
                     `;
@@ -417,6 +418,31 @@
         const url = '/user?username=' + encodeURIComponent(username) + '&userid=' + encodeURIComponent(userid);
         console.log('Generated URL:', url);
         window.location.href = url;
+    }
+    
+    function addFavorite(propertyId) {
+        // Make a POST request to /user/favorites endpoint with the propertyId
+        fetch('/user/favorites', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ userId: '<%= locals.userid %>', propertyId: propertyId })
+        })
+            .then(response => {
+                if (response.ok) {
+                    // If the request is successful, alert the user
+                    alert('Property added to favorites successfully');
+                } else {
+                    // If there is an error, alert the user
+                    alert('Failed to add property to favorites');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // If there is an error, alert the user
+                alert('Failed to add property to favorites');
+            });
     }
 
     

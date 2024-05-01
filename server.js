@@ -110,6 +110,21 @@ app.post('/login', (req, res) => {
 });
 
 
+// Add this route handler after other routes
+app.post('/user/favorites', (req, res) => {
+    const { userId, propertyId } = req.body;
+
+    // Insert the favorite property into the UserFavorites table
+    const sql = 'INSERT INTO UserFavorites (userId, propertyId) VALUES (?, ?)';
+    db.query(sql, [userId, propertyId], (err, result) => {
+        if (err) {
+            console.error('Error adding property to favorites:', err);
+            res.status(500).json({ error: 'Error adding property to favorites' });
+            return;
+        }
+        res.status(201).json({ message: 'Property added to favorites successfully' });
+    });
+});
 
 
 
