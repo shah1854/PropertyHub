@@ -223,24 +223,23 @@ app.get('/properties', async (req, res) => {
                         if (reverseGeocodeResult.length > 0) {
                             // Assuming the first result contains the street address
                             property.address = reverseGeocodeResult[0].formattedAddress;
+                            for (let property of properties) {
+                                await db.promise().query('CALL ComparePropertyPriceToAverage(?, ?)', [latitude, longitude])
+                                    .then((ratingResults) => {
+                                        property.priceRating = ratingResults[0][0].priceComparison; // Assuming the rating is returned as the first row of the first result set
+                                    })
+                                    .catch((ratingError) => {
+                                        console.error('Error fetching price rating:', ratingError);
+                                        property.priceRating = 'Rating unavailable';
+                                    });
+                            }
                         } else {
                             property.address = 'Address not found';
                         }
                     }
                     // For each property, get the price rating
-                    const properties = results[1];
-                    for (let property of properties) {
-                        await db.promise().query('CALL ComparePropertyPriceToAverage(?, ?)', [latitude, longitude])
-                            .then((ratingResults) => {
-                                property.priceRating = ratingResults[0][0].priceComparison; // Assuming the rating is returned as the first row of the first result set
-                            })
-                            .catch((ratingError) => {
-                                console.error('Error fetching price rating:', ratingError);
-                                property.priceRating = 'Rating unavailable';
-                            });
-                    }
 
-                    res.json(properties);
+                    res.json(result[0]);
                 });
         } else {
             console.log('Address not found');
