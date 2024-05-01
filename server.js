@@ -64,7 +64,9 @@ app.use(express.static(__dirname + '/public'));
 // Route to serve index.ejs
 app.get('/', (req, res) => {
     const username = req.query.username;
-    res.render('index', { username });
+    const userid = req.query.userId; // Retrieve userId from query string if available
+    res.render('index', { username, userid });
+
 });
 
 app.get('/login', (req, res) => {
@@ -73,7 +75,8 @@ app.get('/login', (req, res) => {
 
 app.get('/user', (req, res) => {
     const username = req.query.username;
-    res.render('user', { username });
+    const userid = req.query.userid; // Retrieve userId from query string if available
+    res.render('user', { username, userid });
 });
 // existing database connection setup
 
@@ -94,7 +97,7 @@ app.post('/login', (req, res) => {
         if (results.length > 0) {
             if (results[0].password === password) {
                 // On successful login, redirect to the home page with username
-                res.redirect('/?username=' + results[0].Name);
+                res.redirect(`/?username=${results[0].Name}&userId=${results[0].userId}`);
             } else {
                 // On password mismatch, redirect back to the login page with an error message
                 res.redirect('/login?error=PasswordIncorrect');
@@ -128,7 +131,7 @@ app.post('/signup', (req, res) => {
             return;
         }
         // Redirect to home page after successful registration with username
-        res.redirect('/?username=' + name);
+        res.redirect(`/?username=${results[0].Name}&userId=${results[0].userId}`);
     });
 });
 
@@ -231,6 +234,21 @@ app.delete('/properties/:propertyId', (req, res) => {
         } else {
             res.json({ message: 'Property deleted successfully' });
         }
+    });
+});
+
+app.post('/user/listings', (req, res) => {
+    const { userId, propertyId } = req.body;
+
+    // Insert the listing into UserListings table
+    const sql = 'INSERT INTO UserListings (userId, propertyId) VALUES (?, ?)';
+    db.query(sql, [userId, propertyId], (err, result) => {
+        if (err) {
+            console.error('Error adding listing to UserListings:', err);
+            res.status(500).send('Error adding listing to UserListings');
+            return;
+        }
+        res.status(201).json({ message: 'Listing added to UserListings successfully' });
     });
 });
 

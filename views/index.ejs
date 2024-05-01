@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -78,28 +79,6 @@
             position: absolute;
             background-color: #f9f9f9;
         }
-
-        .search-bar {
-    display: flex; /* This will align all children elements (inputs and selects) in a row */
-    flex-wrap: wrap; /* Allows the elements to wrap into the next line if the screen width is too small */
-    justify-content: space-between; /* This will add space between the elements evenly */
-    align-items: center; /* This will vertically center all items */
-    margin-top: 10px; /* Adds a little space above the search bar for clarity */
-    padding: 10px; /* Padding around the elements within the search bar */
-    background-color: #f8f8f8; /* Optional: adds a background color to the search bar */
-    border-radius: 5px; /* Optional: rounds the corners of the search bar */
-}
-
-.search-bar select, .search-bar input {
-    margin-right: 10px; /* Adds space to the right of each element */
-    padding: 8px; /* Adds padding inside the inputs and selects for better readability */
-    width: auto; /* Auto width to adjust based on the content */
-}
-
-.search-bar input[type="text"] {
-    flex-grow: 1; /* Allows the text input to grow and take available space */
-}
-
     </style>
 </head>
 <body>
@@ -117,7 +96,7 @@
     </div>
     <div class="logo">Property Hub</div>
     <% if (typeof locals.username !== 'undefined' && locals.username !== null) { %>
-        <div class="button username" onclick="redirectToUserPage('<%= locals.username %>')">Welcome, <%= locals.username %></div>
+        <div class="button username" onclick="redirectToUserPage('<%= locals.username %>', '<%= locals.userid %>')">Welcome, <%= locals.username %></div>
     <% } %>
 
 
@@ -125,66 +104,7 @@
 </div>
 
 
-<div class="search-bar">
-    <select name="price" id="priceFilter">
-        <option value="">Price</option>
-        <option value="0-100000">$0 - $100,000</option>
-        <option value="100000-200000">$100,000 - $200,000</option>
-        <option value="200000-300000">$200,000 - $300,000</option>
-        <option value="300000-400000">$300,000 - $400,000</option>
-        <option value="400000-500000">$400,000 - $500,000</option>
-        <option value="500000+">$500,000+</option>
-    </select>
 
-<input type="text" name="distance" id="distanceFilter" placeholder="Distance in miles" required>
-
-    <select name="bathrooms" id="bathroomsFilter">
-        <option value="">Bathrooms</option>
-        <option value="0">0</option>
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-        <option value="6">6</option>
-        <option value="7">7</option>
-        <option value="8">8</option>
-        <option value="9">9</option>
-        <option value="10">10</option>
-                        
-    </select>
-    
-    <select name="bedrooms" id="bedroomsFilter">
-        <option value="">Bedrooms</option>
-        <option value="0">0</option>
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-        <option value="6">6</option>
-        <option value="7">7</option>
-        <option value="8">8</option>
-        <option value="9">9</option>
-        <option value="10">10</option>
-                        
-    </select>
-
-    <select id="propertyTypeInput" name="propertyType" required>
-            <option value="">Property Type</option>
-            <option value="SINGLE_FAMILY_RESIDENTIAL">Single Family Residential</option>
-            <option value="CONDO_COOP">Condo/Coop</option>
-            <option value="TOWNHOUSE">Townhouse</option>
-            <option value="MULTI_FAMILY_2_TO_4">Multi-Family (2 to 4)</option>
-            <option value="MULTI_FAMILY_5_PLUS">Multi-Family (5 or more)</option>
-        </select><br>
-
-<select name="yearBuilt" id="yearBuiltFilter">
-    <option value="">Year Built</option>
-    <% for (let year = 1900; year <= 2024; year++) { %>
-        <option value="<%= year %>"><%= year %></option>
-    <% } %>
-</select>
 
 
 <div class="search-container">
@@ -377,8 +297,11 @@
             });
     }
     
-    function redirectToUserPage(username) {
-        window.location.href = '/user?username=' + encodeURIComponent(username);
+    function redirectToUserPage(username, userid) {
+        console.log('Redirecting to user page:', username, userid);
+        const url = '/user?username=' + encodeURIComponent(username) + '&userid=' + encodeURIComponent(userid);
+        console.log('Generated URL:', url);
+        window.location.href = url;
     }
 
     
