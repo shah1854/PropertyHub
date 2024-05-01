@@ -168,7 +168,7 @@ app.post('/properties', (req, res) => {
 
 
 app.get('/properties', async (req, res) => {
-    const { search } = req.query;
+    const { search, distance, minPrice, maxPrice, bathrooms, bedrooms, propertyType, yearBuilt} = req.query;
     try {
         const coordinates = await getCoordinates(search);
         if (coordinates) {
@@ -176,7 +176,9 @@ app.get('/properties', async (req, res) => {
             console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
             
             // Call stored procedure to fetch properties within 10-mile radius
-            db.query('CALL GetPropertiesWithinDistance(?, ?, ?)', [latitude, longitude, 10], async (err, results) => {
+            db.query('CALL GetPropertiesWithinDistance(?, ?, ?, ?, ?, ?, ?, ?, ?)', [latitude, longitude, distance || 10, minPrice || 0, maxPrice || 500000000, 
+                    bathrooms || null, bedrooms || null, propertyType || null, 
+                    yearBuilt || null], async (err, results) => {
                 if (err) {
                     console.error(err);
                     res.status(500).json({ error: 'Error fetching properties within distance' });
@@ -208,6 +210,9 @@ app.get('/properties', async (req, res) => {
 
 
 
+
+
+
 // Update a property
 app.put('/properties/:propertyId', (req, res) => {
     const propertyId = req.params.propertyId;
@@ -224,7 +229,6 @@ app.put('/properties/:propertyId', (req, res) => {
     });
 });
 
-/*
 // Delete a property
 app.delete('/properties/:propertyId', (req, res) => {
     const propertyId = req.params.propertyId;
@@ -238,33 +242,6 @@ app.delete('/properties/:propertyId', (req, res) => {
         }
     });
 });
-*/
-app.delete('/properties/:propertyId', (req, res) => {
-    const propertyId = req.params.propertyId;
-    const userId = req.query.userid; // Retrieve userId from query string if available
-
-    db.query('DELETE FROM UserListings WHERE propertyId = ? AND userId = ?', [propertyId, userId], (err, result) => {
-        if (err) {
-            res.status(500).json({ error: err.message });
-        } else if (result.affectedRows === 0) {
-            res.status(404).json({ message: 'Property not found for the user' });
-        } else {
-            // If the UserListings entry is deleted successfully, delete the property entry as well
-            db.query('DELETE FROM Properties WHERE propertyId = ?', propertyId, (err, result) => {
-                if (err) {
-                    res.status(500).json({ error: err.message });
-                } else if (result.affectedRows === 0) {
-                    res.status(404).json({ message: 'Property not found' });
-                } else {
-                    res.json({ message: 'Property deleted successfully' });
-                }
-            });
-        }
-    });
-});
-
-
-
 
 app.post('/user/listings', (req, res) => {
     const { userId, propertyId } = req.body;

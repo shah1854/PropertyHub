@@ -231,13 +231,6 @@ function viewListings() {
             data.forEach(property => {
                 const li = document.createElement('li');
                 li.textContent = `Property ID: ${property.propertyId}, Price: ${property.price}, Square Footage: ${property.squareFootage}, Bedrooms: ${property.numBedrooms}, Bathrooms: ${property.numBathrooms}, Type: ${property.propertyType}, Year Built: ${property.yearBuilt}`;
-                
-                // Add a delete button for each property
-                const deleteButton = document.createElement('button');
-                deleteButton.textContent = 'Delete';
-                deleteButton.onclick = () => deleteListing(property.propertyId);
-                li.appendChild(deleteButton);
-                
                 ul.appendChild(li);
             });
             listingsContainer.appendChild(ul);
@@ -250,27 +243,6 @@ function viewListings() {
         alert('Failed to fetch user listings');
     });
 }
-
-function deleteListing(propertyId) {
-    if (confirm("Are you sure you want to delete this listing?")) {
-        fetch(`/properties/${propertyId}?userid=<%= userid %>`, {
-            method: 'DELETE',
-        })
-        .then(response => {
-            if (response.ok) {
-                // Refresh the listings after successful deletion
-                viewListings();
-            } else {
-                throw new Error('Failed to delete listing');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Failed to delete listing');
-        });
-    }
-}
-
 
 
         function logout() {
