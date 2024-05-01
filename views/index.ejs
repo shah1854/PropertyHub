@@ -370,41 +370,42 @@
                 propertyList.innerHTML = '<p>No properties found.</p>';
             } else {
                 data.forEach(property => {
-                // Create a container for each property and its buttons
-                const propertyContainer = document.createElement('div');
-                propertyContainer.classList.add('property-container');
+            // Create a container for each property and its buttons
+            const propertyContainer = document.createElement('div');
+            propertyContainer.classList.add('property-container');
 
-                // Add property details to the container
-                propertyContainer.innerHTML = `
-                    <div class="property">
-                        <h3><p>${property.address}</p></h3>
-                        <p>Price: $${property.price}</p>
-                        <p>Square Footage: ${property.squareFootage}</p>
-                        <p>Number of Bedrooms: ${property.numBedrooms}</p>
-                        <p>Number of Bathrooms: ${property.numBathrooms}</p>
-                        <p>Property Type: ${property.propertyType}</p>
-                        <p>Year Built: ${property.yearBuilt}</p>
-                    </div>
-                `;
+            // Add property details to the container
+            propertyContainer.innerHTML = `
+                <div class="property">
+                    <h3><p>${property.address}</p></h3>
+                    <p>Price: $${property.price}</p>
+                    <p>Square Footage: ${property.squareFootage}</p>
+                    <p>Number of Bedrooms: ${property.numBedrooms}</p>
+                    <p>Number of Bathrooms: ${property.numBathrooms}</p>
+                    <p>Property Type: ${property.propertyType}</p>
+                    <p>Year Built: ${property.yearBuilt}</p>
+                </div>
+            `;
 
-                // Create buttons for each property
-                const searchButton = document.createElement('button');
-                searchButton.textContent = 'Search';
-                searchButton.classList.add('button');
-                searchButton.addEventListener('click', () => searchProperties());
+            // Create buttons for each property
+            const searchButton = document.createElement('button');
+            searchButton.textContent = 'Search';
+            searchButton.classList.add('button');
+            searchButton.addEventListener('click', () => searchProperties());
 
-                const favoriteButton = document.createElement('button');
-                favoriteButton.textContent = 'Add to Favorites';
-                favoriteButton.classList.add('button');
-                favoriteButton.addEventListener('click', () => addFavorite(property.propertyId));
+            const favoriteButton = document.createElement('button');
+            favoriteButton.textContent = 'Add to Favorites';
+            favoriteButton.classList.add('button');
+            favoriteButton.addEventListener('click', () => addFavorite(property.propertyId));
 
-                // Append buttons to the property container
-                propertyContainer.appendChild(searchButton);
-                propertyContainer.appendChild(favoriteButton);
+            // Append buttons to the property container
+            propertyContainer.appendChild(searchButton);
+            propertyContainer.appendChild(favoriteButton);
 
-                // Append the property container to the property list
-                propertyList.appendChild(propertyContainer);
-            });
+            // Append the property container to the property list
+            propertyList.appendChild(propertyContainer);
+        });
+
 
             }
         })
