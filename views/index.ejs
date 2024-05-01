@@ -312,11 +312,37 @@
     function searchProperties() {
     const searchInput = document.getElementById('searchInput').value.trim();
     const distance = document.getElementById('distanceFilter').value.trim();
+    const price = document.getElementById('priceFilter').value;
+    const bathrooms = document.getElementById('bathroomsFilter').value;
+    const bedrooms = document.getElementById('bedroomsFilter').value;
+    const propertyType = document.getElementById('propertyTypeInput').value;
+    const yearBuilt = document.getElementById('yearBuiltFilter').value;
+
+    let minPrice, maxPrice;
+    if (price.includes('+')) {
+        minPrice = price.replace('+', '').trim(); // Handle "500,000+"
+        maxPrice = NULL; // No upper limit
+    } else {
+        const prices = price.split('-').map(p => p.trim());
+        minPrice = prices[0] || NULL;
+        maxPrice = prices[1] || NULL;
+    }
+
+
+
+
 
     const queryParams = new URLSearchParams({
         search: searchInput,
-        distance: distance
-    }).toString();
+        distance: distance,
+	minPrice: minPrice,
+        maxPrice: maxPrice,
+        bathrooms: bathrooms,
+        bedrooms: bedrooms,
+        propertyType: propertyType,
+        yearBuilt: yearBuilt
+   }).toString();
+
 
     fetch(`/properties?search=${queryParams}`)
         .then(response => response.json())
