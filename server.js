@@ -252,6 +252,33 @@ app.post('/user/listings', (req, res) => {
     });
 });
 
+app.post('/user/address', async (req, res) => {
+    const { streetAddress, city, state, zipcode, propertyId} = req.body;
+    const address = `${streetAddress}, ${city}, ${state} ${zipcode}`;
+    try {
+        const coordinates = await getCoordinates(address);
+        if (coordinates) {
+            const { latitude, longitude } = coordinates;
+            console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+            const sql = 'INSERT INTO Address (latitude, longitude, city, state, zip, propertyId) VALUES (?, ?, ?, ?, ?, ?)';
+            db.query(sql, [latitude, longitude, city, state, zipcode, propertyId], (err, result) => {
+                if (err) {
+                    res.status(500).json({ error: err.message });
+                } else {
+                    res.status(201).json({ propertyId: propertyId }); // Send back the propertyId in the response
+                }
+            });
+
+        } else {
+            console.log('Address not found');
+            res.status(404).json({ error: 'Address not found' });
+        }
+    } catch (error) {
+        console.error('Error getting coordinates:', error);
+        res.status(500).json({ error: 'Error getting coordinates' });
+    }
+});
+
 
 
 // Start the server
