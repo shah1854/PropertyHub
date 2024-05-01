@@ -114,17 +114,35 @@ app.post('/login', (req, res) => {
 app.post('/user/favorites', (req, res) => {
     const { userId, propertyId } = req.body;
 
-    // Insert the favorite property into the UserFavorites table
-    const sql = 'INSERT INTO UserFavorites (userId, propertyId) VALUES (?, ?)';
-    db.query(sql, [userId, propertyId], (err, result) => {
+    // Check if the property is already in favorites for the user
+    const checkSql = 'SELECT COUNT(*) AS count FROM UserFavorites WHERE userId = ? AND propertyId = ?';
+    db.query(checkSql, [userId, propertyId], (err, result) => {
         if (err) {
-            console.error('Error adding property to favorites:', err);
-            res.status(500).json({ error: 'Error adding property to favorites' });
+            console.error('Error checking property in favorites:', err);
+            res.status(500).json({ error: 'Internal server error' });
             return;
         }
-        res.status(201).json({ message: 'Property added to favorites successfully' });
+
+        const count = result[0].count;
+
+        if (count > 0) {
+            // Property already exists in favorites for the user
+            res.status(400).json({ error: 'Property already in favorites for the user' });
+        } else {
+            // Insert the favorite property into the UserFavorites table
+            const insertSql = 'INSERT INTO UserFavorites (userId, propertyId) VALUES (?, ?)';
+            db.query(insertSql, [userId, propertyId], (err, result) => {
+                if (err) {
+                    console.error('Error adding property to favorites:', err);
+                    res.status(500).json({ error: 'Error adding property to favorites' });
+                    return;
+                }
+                res.status(201).json({ message: 'Property added to favorites successfully' });
+            });
+        }
     });
 });
+
 
 
 
@@ -327,6 +345,49 @@ app.post('/user/address', async (req, res) => {
         res.status(500).json({ error: 'Error getting coordinates' });
     }
 });
+
+app.get('/user/favorites', (req, res) => {
+    const userId = req.query.userid; // Retrieve userId from query string if available
+    const sql = `SELECT Properties.* FROM UserFavorites 
+                 JOIN Properties ON UserFavorites.propertyId = Properties.propertyId 
+                 WHERE UserFavorites.userId = ?`;
+
+    db.query(sql, [userId], (err, results) => {
+        if (err) {
+            console.error('Error fetching user favorites:', err);
+            res.status(500).json({ error: 'Internal server error' });
+            return;
+        }
+
+        res.json(results); // Send the favorite listings to the frontend
+    });
+});
+
+// Assuming you have already defined your express app and database connection (`app` and `db` respectively)
+
+// Endpoint to handle deletion of a property from favorites
+app.delete('/user/favorites/:propertyId', (req, res) => {
+    const { propertyId } = req.params;
+    const userId = req.query.userid; // Assuming userId is passed as a query parameter
+
+    // SQL query to delete the property from favorites for the specific user
+    const sql = 'DELETE FROM UserFavorites WHERE userId = ? AND propertyId = ?';
+    db.query(sql, [userId, propertyId], (err, result) => {
+        if (err) {
+            console.error('Error removing property from favorites:', err);
+            res.status(500).json({ error: 'Error removing property from favorites' });
+            return;
+        }
+        // Check if any rows were affected (indicating successful deletion)
+        if (result.affectedRows > 0) {
+            res.status(200).json({ message: 'Property removed from favorites successfully' });
+        } else {
+            // If no rows were affected, it means the property wasn't in favorites
+            res.status(404).json({ error: 'Property not found in favorites' });
+        }
+    });
+});
+
 
 
 

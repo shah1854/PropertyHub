@@ -41,6 +41,7 @@
     <button class="button" onclick="backToHome()">Back to Home</button>
     <button class="button logout" onclick="logout()">Logout</button>
     <button class="button" onclick="viewListings()">View Listings</button>
+    <button class="button" onclick="viewFavorites()">View Favorites</button>
 
     <h2>Add New Listing</h2>
     <div id="addListingForm">
@@ -90,8 +91,11 @@
             <input type="submit" value="Add Listing">
         </form>
     </div>
+    <h3>Your Listings</h3>
     <div id="listingsContainer"></div>
     <div id="updatePriceFormContainer"></div>
+    <h3>Favorite Listings</h3>
+    <div id="favoritesContainer"></div>
 
 </div>
 
@@ -330,6 +334,65 @@ function showUpdatePriceForm(propertyId) {
     form.appendChild(submitButton);
     
     formContainer.appendChild(form);
+}
+
+function viewFavorites() {
+    // Fetch user's favorite listings
+    fetch(`/user/favorites?userid=<%= userid %>`)
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error('Failed to fetch user favorites');
+        }
+    })
+    .then(data => {
+        const favoritesContainer = document.getElementById('favoritesContainer');
+        favoritesContainer.innerHTML = ''; // Clear previous favorites
+        
+        if (data.length > 0) {
+            const ul = document.createElement('ul');
+            data.forEach(property => {
+                const li = document.createElement('li');
+                li.textContent = `Property ID: ${property.propertyId}, Price: ${property.price}, Square Footage: ${property.squareFootage}, Bedrooms: ${property.numBedrooms}, Bathrooms: ${property.numBathrooms}, Type: ${property.propertyType}, Year Built: ${property.yearBuilt}, Address: ${property.address}`;
+                
+                // Add a delete button for each property in favorites
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.onclick = () => deleteFromFavorites(property.propertyId);
+                li.appendChild(deleteButton);
+                
+                ul.appendChild(li);
+            });
+            favoritesContainer.appendChild(ul);
+        } else {
+            favoritesContainer.innerHTML = 'You have no favorite listings yet.';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to fetch user favorites');
+    });
+}
+
+function deleteFromFavorites(propertyId) {
+    if (confirm("Are you sure you want to remove this property from favorites?")) {
+        fetch(`/user/favorites/${propertyId}?userid=<%= userid %>`, {
+            method: 'DELETE',
+        })
+        .then(response => {
+            if (response.ok) {
+                // Refresh the favorites after successful deletion
+                viewFavorites();
+            } else {
+                throw new Error('Failed to remove property from favorites');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to remove property from favorites');
+        });
+    }
 }
 
 
