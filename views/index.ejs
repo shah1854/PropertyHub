@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Property Hub</title>
+    <title><a href="/">Property Hub</a></title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -54,18 +54,6 @@
             margin-top: 20px;
         }
         
-        .add-listing {
-            background-color: #f8f8f8;
-        }
-        
-        .delete-listing {
-            background-color: #f8f8f8;
-        }
-        
-        .update-listing {
-            background-color: #f8f8f8;
-        }
-        
         .login {
             background-color: #f8f8f8;
         }
@@ -74,11 +62,6 @@
             background-color: #f8f8f8;
         }
         
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            background-color: #f9f9f9;
-        }
         .property-container {
             display: flex;
             justify-content: space-between;
@@ -89,9 +72,7 @@
         .property {
             flex-grow: 1; /* Property details take up remaining space */
         }
-
-
-
+        
         .search-bar {
     display: flex; /* This will align all children elements (inputs and selects) in a row */
     /* flex-wrap: wrap; Allows the elements to wrap into the next line if the screen width is too small */
@@ -119,21 +100,13 @@
 <body>
 
 <div class="header">
-    <div class="button-container">
-        <div class="button manage-listings" id="manageListingsBtn" onclick="toggleManageListingsDropdown()">
-            Manage Listings <span>&#9660;</span>
-            <div class="dropdown-content" id="manageListingsDropdown">
-                <div class="button add-listing" onclick="showAddListingForm()">Add Listing</div>
-                <div class="button delete-listing" onclick="showDeleteListingForm()">Delete Listing</div>
-                <div class="button update-listing" onclick="showUpdateListingForm()">Update Listing</div>
-            </div>
-        </div>
-    </div>
-    <div class="logo">Property Hub</div>
     <% if (typeof locals.username !== 'undefined' && locals.username !== null) { %>
-        <div class="button username" onclick="redirectToUserPage('<%= locals.username %>', '<%= locals.userid %>')">Welcome, <%= locals.username %></div>
+        <div class="button username" onclick="redirectToUserPage('<%= locals.username %>', '<%= locals.userid %>')"><%= locals.username %></div>
+    <% } else { %>
+        <div class="button username">    </div>
     <% } %>
-
+    
+    <div class="logo">Property Hub</div>
 
     <div class="button login" onclick="location.href='/login'">Login / Sign up</div>
 </div>
@@ -206,126 +179,9 @@
     <div id="propertyList"></div>
 </div>
 
-<div id="deleteListingForm" style="display: none;">
-    <h2>Delete Listing</h2>
-    <form onsubmit="deleteProperty(event)">
-        <label for="propertyId">Property ID:</label><br>
-        <input type="text" id="propertyIdInput" name="propertyId" required><br>
-        <input type="submit" value="Delete">
-    </form>
-</div>
-
-
-<div id="addListingForm" style="display: none;">
-    <h2>Add New Listing</h2>
-    <form onsubmit="addProperty(event)">
-        <label for="price">Price:</label><br>
-        <input type="text" id="priceInput" name="price" required><br>
-        <label for="squareFootage">Square Footage:</label><br>
-        <input type="text" id="squareFootageInput" name="squareFootage" required><br>
-        <label for="numBedrooms">Number of Bedrooms:</label><br>
-        <select id="numBedroomsInput" name="numBedrooms" required>
-            <option value="">Select</option>
-            <% for (let i = 0; i <= 10; i++) { %>
-                <option value="<%= i %>"><%= i %></option>
-            <% } %>
-        </select><br>
-        <label for="numBathrooms">Number of Bathrooms:</label><br>
-        <select id="numBathroomsInput" name="numBathrooms" required>
-            <option value="">Select</option>
-            <% for (let i = 0; i <= 10; i++) { %>
-                <option value="<%= i %>"><%= i %></option>
-            <% } %>
-        </select><br>
-        <label for="propertyType">Property Type:</label><br>
-        <select id="propertyTypeInput" name="propertyType" required>
-            <option value="">Select</option>
-            <option value="SINGLE_FAMILY_RESIDENTIAL">Single Family Residential</option>
-            <option value="CONDO_COOP">Condo/Coop</option>
-            <option value="TOWNHOUSE">Townhouse</option>
-            <option value="MULTI_FAMILY_2_TO_4">Multi-Family (2 to 4)</option>
-            <option value="MULTI_FAMILY_5_PLUS">Multi-Family (5 or more)</option>
-        </select><br>
-        <label for="yearBuilt">Year Built:</label><br>
-        <select id="yearBuiltInput" name="yearBuilt" required>
-            <option value="">Select</option>
-            <% for (let year = 1900; year <= 2024; year++) { %>
-                <option value="<%= year %>"><%= year %></option>
-            <% } %>
-        </select><br>
-        <input type="submit" value="Submit">
-    </form>
-</div>
-
 <script>
-    document.addEventListener("click", function(event) {
-        if (!event.target.matches('.manage-listings')) {
-            var dropdowns = document.getElementsByClassName("dropdown-content");
-            for (var i = 0; i < dropdowns.length; i++) {
-                var openDropdown = dropdowns[i];
-                if (openDropdown.style.display === "block") {
-                    openDropdown.style.display = "none";
-                }
-            }
-        }
-    });
-    
-    function toggleManageListingsDropdown() {
-        var dropdown = document.getElementById("manageListingsDropdown");
-        if (dropdown.style.display === "block") {
-            dropdown.style.display = "none";
-        } else {
-            dropdown.style.display = "block";
-        }
-    }
-
 
 // Rest of your existing JavaScript functions remain unchanged
-
-    function showAddListingForm() {
-        document.getElementById('addListingForm').style.display = 'block';
-    }
-
-    function addProperty(event) {
-        event.preventDefault();
-        const price = document.getElementById('priceInput').value;
-        const squareFootage = document.getElementById('squareFootageInput').value;
-        const numBedrooms = document.getElementById('numBedroomsInput').value;
-        const numBathrooms = document.getElementById('numBathroomsInput').value;
-        const propertyType = document.getElementById('propertyTypeInput').value;
-        const yearBuilt = document.getElementById('yearBuiltInput').value;
-        const data = {
-            price: price,
-            squareFootage: squareFootage,
-            numBedrooms: numBedrooms,
-            numBathrooms: numBathrooms,
-            propertyType: propertyType,
-            yearBuilt: yearBuilt
-        };
-        fetch('/properties', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        })
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    throw new Error('Failed to add property');
-                }
-            })
-            .then(result => {
-                alert('Property added successfully');
-                document.getElementById('addListingForm').reset();
-                document.getElementById('addListingForm').style.display = 'none';
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Failed to add property');
-            });
-    }
 
     function searchProperties() {
     const searchInput = document.getElementById('searchInput').value.trim();
@@ -409,36 +265,6 @@
             console.error('Error:', error);
             alert('Failed to fetch properties');
         });
-    }
-
-    
-    function showDeleteListingForm() {
-    const deleteForm = document.getElementById('deleteListingForm');
-    deleteForm.style.display = 'block';
-    }
-
-    function deleteProperty(event) {
-        event.preventDefault();
-        const propertyId = document.getElementById('propertyIdInput').value.trim();
-        fetch(`/properties/${propertyId}`, {
-            method: 'DELETE'
-        })
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    throw new Error('Failed to delete property');
-                }
-            })
-            .then(result => {
-                alert('Property deleted successfully');
-                document.getElementById('deleteListingForm').reset();
-                document.getElementById('deleteListingForm').style.display = 'none';
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Failed to delete property');
-            });
     }
     
     function redirectToUserPage(username, userid) {

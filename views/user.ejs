@@ -355,7 +355,7 @@ function viewFavorites() {
             const ul = document.createElement('ul');
             data.forEach(property => {
                 const li = document.createElement('li');
-                li.textContent = `Property ID: ${property.propertyId}, Price: ${property.price}, Square Footage: ${property.squareFootage}, Bedrooms: ${property.numBedrooms}, Bathrooms: ${property.numBathrooms}, Type: ${property.propertyType}, Year Built: ${property.yearBuilt}, Address: ${property.address}`;
+                li.textContent = `Property ID: ${property.propertyId}, Price: ${property.price}, Square Footage: ${property.squareFootage}, Bedrooms: ${property.numBedrooms}, Bathrooms: ${property.numBathrooms}, Type: ${property.propertyType}, Year Built: ${property.yearBuilt}`;
                 
                 // Add a delete button for each property in favorites
                 const deleteButton = document.createElement('button');
