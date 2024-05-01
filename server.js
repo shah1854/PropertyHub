@@ -64,7 +64,7 @@ app.use(express.static(__dirname + '/public'));
 // Route to serve index.ejs
 app.get('/', (req, res) => {
     const username = req.query.username;
-    const userid = req.query.userId; // Retrieve userId from query string if available
+    const userid = req.query.userid; // Retrieve userId from query string if available
     res.render('index', { username, userid });
 
 });
@@ -97,7 +97,7 @@ app.post('/login', (req, res) => {
         if (results.length > 0) {
             if (results[0].password === password) {
                 // On successful login, redirect to the home page with username
-                res.redirect(`/?username=${results[0].Name}&userId=${results[0].userId}`);
+                res.redirect(`/?username=${results[0].Name}&userid=${results[0].userId}`);
             } else {
                 // On password mismatch, redirect back to the login page with an error message
                 res.redirect('/login?error=PasswordIncorrect');
@@ -131,7 +131,7 @@ app.post('/signup', (req, res) => {
             return;
         }
         // Redirect to home page after successful registration with username
-        res.redirect(`/?username=${results[0].Name}&userId=${results[0].userId}`);
+        res.redirect(`/?username=${results[0].Name}&userid=${results[0].userId}`);
     });
 });
 
