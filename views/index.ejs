@@ -395,7 +395,6 @@
             favoriteButton.addEventListener('click', () => addFavorite(property.propertyId));
 
             // Append buttons to the property container
-            propertyContainer.appendChild(searchButton);
             propertyContainer.appendChild(favoriteButton);
 
             // Append the property container to the property list
@@ -463,13 +462,13 @@
                     alert('Property added to favorites successfully');
                 } else {
                     // If there is an error, alert the user
-                    alert('Failed to add property to favorites -- Need to Login');
+                    alert('Failed to add property to favorites Need ot Login');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
                 // If there is an error, alert the user
-                alert('Failed to add property to favorites -- Need to Login');
+                alert('Failed to add property to favorites Need to Login');
             });
     }
 
