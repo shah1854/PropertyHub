@@ -416,24 +416,41 @@ function getValueIndicatorClass(valueComparison) {
                 propertyList.innerHTML = '<p>No properties found.</p>';
             } else {
                 data.forEach(property => {
-            // Create a container for each property and its buttons
-            const propertyContainer = document.createElement('div');
-            propertyContainer.classList.add('property-container');
-
-            // Add property details to the container
-            propertyContainer.innerHTML = `
-                <div class="property">
-                    <h3><p>${property.address}</p></h3>
-                    <p>Price: $${property.price}</p>
-                    <p>Square Footage: ${property.squareFootage}</p>
-                    <p>Number of Bedrooms: ${property.numBedrooms}</p>
-                    <p>Number of Bathrooms: ${property.numBathrooms}</p>
-                    <p>Property Type: ${property.propertyType}</p>
-                    <p>Year Built: ${property.yearBuilt}</p>
-                    <p>Price Rating: ${property.priceRating}</p>
-                </div>
-            `;
-
+                    // Create a container for each property and its buttons
+                    const propertyContainer = document.createElement('div');
+                    propertyContainer.classList.add('property-container');
+                    fetch('/comparePropertyPriceToAverage', {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ centerLat:property.latitude, centerLng:proper.longitude })
+                    }).then(response => {
+                        if (response.ok) {
+                        return repsonse.json();
+                        } else {
+                            throw new Error('Failed to get rating');
+                        }
+                    }).then(result => {
+                        property.rating = result[0];
+                    });
+                        
+                    // Add property details to the container
+                    propertyContainer.innerHTML = `
+                        <div class="property">
+                            <h3><p>${property.address}</p></h3>
+                            <p>Price: $${property.price}</p>
+                            <p>Square Footage: ${property.squareFootage}</p>
+                            <p>Number of Bedrooms: ${property.numBedrooms}</p>
+                            <p>Number of Bathrooms: ${property.numBathrooms}</p>
+                            <p>Property Type: ${property.propertyType}</p>
+                            <p>Year Built: ${property.yearBuilt}</p>
+                            <p>Price Rating: ${property.rating}</p>
+                        </div>
+                    `;
+                    
+                });
+            }
             // Create buttons for each property
 
             const favoriteButton = document.createElement('button');
@@ -446,10 +463,6 @@ function getValueIndicatorClass(valueComparison) {
 
             // Append the property container to the property list
             propertyList.appendChild(propertyContainer);
-        });
-
-
-            }
         })
         .catch(error => {
             console.error('Error:', error);

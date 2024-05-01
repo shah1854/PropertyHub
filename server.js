@@ -127,7 +127,7 @@ app.post('/user/favorites', (req, res) => {
 });
 
 app.get('/comparePropertyPriceToAverage', (req, res) => {
-    const { centerLat, centerLng } = req.query;
+    const { centerLat, centerLng } = req.body;
 
     // Execute the stored procedure
     db.query('CALL ComparePropertyPriceToAverage(?, ?)', [centerLat, centerLng], (err, results) => {
@@ -139,6 +139,7 @@ app.get('/comparePropertyPriceToAverage', (req, res) => {
         
         // Extract the result from the stored procedure
         const properties = results[1]; // Assuming the properties result set is the second one
+        console.log(results);
         res.json({ properties });
     });
 });
