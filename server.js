@@ -124,16 +124,17 @@ app.post('/signup', (req, res) => {
 
     // Insert the user directly into the database
     const sql = 'INSERT INTO Users (userName, password, name) VALUES (?, ?, ?)';
-    db.query(sql, [email, password, name], (err, result) => {
+    db.query(sql, [email, password, name], (err, results) => {
         if (err) {
             console.error('Error during user registration:', err);
             res.status(500).send('Error registering user.');
             return;
         }
         // Redirect to home page after successful registration with username
-        res.redirect(`/?username=${results[0].Name}&userid=${results[0].userId}`);
+        res.redirect(`/?username=${name}&userid=${results.insertId}`);
     });
 });
+
 
 
 
