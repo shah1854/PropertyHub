@@ -199,35 +199,39 @@ app.post('/properties', (req, res) => {
 
 
 app.get('/properties', async (req, res) => {
-    const { search, distance, minPrice, maxPrice, bathrooms, bedrooms, propertyType, yearBuilt} = req.query;
+    const { search, distance, minPrice, maxPrice, bathrooms, bedrooms, propertyType, yearBuilt } = req.query;
+
     try {
         const coordinates = await getCoordinates(search);
         if (coordinates) {
             const { latitude, longitude } = coordinates;
             console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
-            
-            // Call stored procedure to fetch properties within 10-mile radius
-            db.query('CALL GetPropertiesWithinDistance(?, ?, ?, ?, ?, ?, ?, ?, ?)', [latitude, longitude, distance || 10, minPrice || 0, maxPrice || 500000000, 
-                    bathrooms || null, bedrooms || null, propertyType || null, 
-                    yearBuilt || null], async (err, results) => {
-                if (err) {
-                    console.error(err);
-                    res.status(500).json({ error: 'Error fetching properties within distance' });
-                } else {
-                    // For each property, perform reverse geocoding
-                    for (let i = 0; i < results[0].length; i++) {
-                        const property = results[0][i];
-                        const reverseGeocodeResult = await geocoder.reverse({ lat: property.latitude, lon: property.longitude });
-                        if (reverseGeocodeResult.length > 0) {
-                            // Assuming the first result contains the street address
-                            property.address = reverseGeocodeResult[0].formattedAddress;
-                        } else {
-                            property.address = 'Address not found';
-                        }
+
+            // Fetch properties within a specified radius and other filters
+            db.query('CALL GetPropertiesWithinDistance(?, ?, ?, ?, ?, ?, ?, ?, ?)', 
+                [latitude, longitude, distance || 10, minPrice || 0, maxPrice || 500000000, bathrooms || null, bedrooms || null, propertyType || null, yearBuilt || null], 
+                async (err, results) => {
+                    if (err) {
+                        console.error(err);
+                        res.status(500).json({ error: 'Error fetching properties within distance' });
+                        return;
                     }
-                    res.json(results[0]); // Assuming the properties are returned as the first result set
-                }
-            });
+
+                    // For each property, get the price rating
+                    const properties = results[0];
+                    for (let property of properties) {
+                        await db.promise().query('CALL ComparePropertyPriceToAverage(?, ?)', [latitude, longitude])
+                            .then((ratingResults) => {
+                                property.priceRating = ratingResults[0][0].priceComparison; // Assuming the rating is returned as the first row of the first result set
+                            })
+                            .catch((ratingError) => {
+                                console.error('Error fetching price rating:', ratingError);
+                                property.priceRating = 'Rating unavailable';
+                            });
+                    }
+
+                    res.json(properties);
+                });
         } else {
             console.log('Address not found');
             res.status(404).json({ error: 'Address not found' });
