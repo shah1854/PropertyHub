@@ -64,7 +64,9 @@ app.use(express.static(__dirname + '/public'));
 // Route to serve index.ejs
 app.get('/', (req, res) => {
     const username = req.query.username;
-    res.render('index', { username });
+    const userid = req.query.userid; // Retrieve userId from query string if available
+    res.render('index', { username, userid });
+
 });
 
 app.get('/login', (req, res) => {
@@ -73,7 +75,8 @@ app.get('/login', (req, res) => {
 
 app.get('/user', (req, res) => {
     const username = req.query.username;
-    res.render('user', { username });
+    const userid = req.query.userid; // Retrieve userId from query string if available
+    res.render('user', { username, userid });
 });
 // existing database connection setup
 
@@ -94,7 +97,7 @@ app.post('/login', (req, res) => {
         if (results.length > 0) {
             if (results[0].password === password) {
                 // On successful login, redirect to the home page with username
-                res.redirect('/?username=' + results[0].Name);
+                res.redirect(`/?username=${results[0].Name}&userid=${results[0].userId}`);
             } else {
                 // On password mismatch, redirect back to the login page with an error message
                 res.redirect('/login?error=PasswordIncorrect');
@@ -121,16 +124,17 @@ app.post('/signup', (req, res) => {
 
     // Insert the user directly into the database
     const sql = 'INSERT INTO Users (userName, password, name) VALUES (?, ?, ?)';
-    db.query(sql, [email, password, name], (err, result) => {
+    db.query(sql, [email, password, name], (err, results) => {
         if (err) {
             console.error('Error during user registration:', err);
             res.status(500).send('Error registering user.');
             return;
         }
         // Redirect to home page after successful registration with username
-        res.redirect('/?username=' + name);
+        res.redirect(`/?username=${name}&userid=${results.insertId}`);
     });
 });
+
 
 
 
@@ -139,7 +143,6 @@ app.post('/signup', (req, res) => {
 // existing server start code
 
 // CRUD operations for Properties
-
 // Create a property
 app.post('/properties', (req, res) => {
     const { price, squareFootage, numBedrooms, numBathrooms, propertyType, yearBuilt } = req.body;
@@ -156,11 +159,12 @@ app.post('/properties', (req, res) => {
             if (err) {
                 res.status(500).json({ error: err.message });
             } else {
-                res.status(201).json({ message: 'Property added successfully' });
+                res.status(201).json({ propertyId: nextPropertyId }); // Send back the propertyId in the response
             }
         });
     });
 });
+
 
 
 app.get('/properties', async (req, res) => {
@@ -237,6 +241,69 @@ app.delete('/properties/:propertyId', (req, res) => {
             res.json({ message: 'Property deleted successfully' });
         }
     });
+});
+
+app.post('/user/listings', (req, res) => {
+    const { userId, propertyId } = req.body;
+
+    // Insert the listing into UserListings table
+    const sql = 'INSERT INTO UserListings (userId, propertyId) VALUES (?, ?)';
+    db.query(sql, [userId, propertyId], (err, result) => {
+        if (err) {
+            console.error('Error adding listing to UserListings:', err);
+            res.status(500).send('Error adding listing to UserListings');
+            return;
+        }
+        res.status(201).json({ message: 'Listing added to UserListings successfully' });
+    });
+});
+
+// Route to fetch user listings
+app.get('/user/listings', (req, res) => {
+    const userId = req.query.userid; // Retrieve userId from query string if available
+    const sql = `SELECT Properties.* FROM UserListings 
+                 JOIN Properties ON UserListings.propertyId = Properties.propertyId 
+                 WHERE UserListings.userId = ?`;
+
+    db.query(sql, [userId], (err, results) => {
+        if (err) {
+            console.error('Error fetching user listings:', err);
+            res.status(500).json({ error: 'Internal server error' });
+            return;
+        }
+
+        res.json(results); // Send the combined data to the frontend
+    });
+});
+
+
+
+
+app.post('/user/address', async (req, res) => {
+    const { streetAddress, city, state, zipcode, propertyId} = req.body;
+    const address = `${streetAddress}, ${city}, ${state} ${zipcode}`;
+    try {
+        const coordinates = await getCoordinates(address);
+        if (coordinates) {
+            const { latitude, longitude } = coordinates;
+            console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+            const sql = 'INSERT INTO Address (latitude, longitude, city, state, zip, propertyId) VALUES (?, ?, ?, ?, ?, ?)';
+            db.query(sql, [latitude, longitude, city, state, zipcode, propertyId], (err, result) => {
+                if (err) {
+                    res.status(500).json({ error: err.message });
+                } else {
+                    res.status(201).json({ propertyId: propertyId }); // Send back the propertyId in the response
+                }
+            });
+
+        } else {
+            console.log('Address not found');
+            res.status(404).json({ error: 'Address not found' });
+        }
+    } catch (error) {
+        console.error('Error getting coordinates:', error);
+        res.status(500).json({ error: 'Error getting coordinates' });
+    }
 });
 
 

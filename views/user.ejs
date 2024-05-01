@@ -33,16 +33,218 @@
 </head>
 <body>
     <div class="container">
-        <div class="welcome-message">
-            Welcome, <%= username %>!
-        </div>
-        <p>This is your user page.</p>
-        <p>You can add content here that is specific to the user.</p>
-        <button class="button" onclick="backToHome()">Back to Home</button>
-        <button class="button logout" onclick="logout()">Logout</button>
+    <div class="welcome-message">
+        Welcome, <%= username %>!
     </div>
+    <p>This is your user page.</p>
+    <p>You can manage your listings here.</p>
+    <button class="button" onclick="backToHome()">Back to Home</button>
+    <button class="button logout" onclick="logout()">Logout</button>
+    <button class="button" onclick="viewListings()">View Listings</button>
 
-    <script>
+    <h2>Add New Listing</h2>
+    <div id="addListingForm">
+        <form onsubmit="addListing(event)">
+            <label for="price">Price:</label><br>
+            <input type="text" id="priceInput" name="price" required><br>
+            <label for="squareFootage">Square Footage:</label><br>
+            <input type="text" id="squareFootageInput" name="squareFootage" required><br>
+            <label for="numBedrooms">Number of Bedrooms:</label><br>
+            <select id="numBedroomsInput" name="numBedrooms" required>
+                <option value="">Select</option>
+                <% for (let i = 0; i <= 10; i++) { %>
+                    <option value="<%= i %>"><%= i %></option>
+                <% } %>
+            </select><br>
+            <label for="numBathrooms">Number of Bathrooms:</label><br>
+            <select id="numBathroomsInput" name="numBathrooms" required>
+                <option value="">Select</option>
+                <% for (let i = 0; i <= 10; i++) { %>
+                    <option value="<%= i %>"><%= i %></option>
+                <% } %>
+            </select><br>
+            <label for="propertyType">Property Type:</label><br>
+            <select id="propertyTypeInput" name="propertyType" required>
+                <option value="">Select</option>
+                <option value="SINGLE_FAMILY_RESIDENTIAL">Single Family Residential</option>
+                <option value="CONDO_COOP">Condo/Coop</option>
+                <option value="TOWNHOUSE">Townhouse</option>
+                <option value="MULTI_FAMILY_2_TO_4">Multi-Family (2 to 4)</option>
+                <option value="MULTI_FAMILY_5_PLUS">Multi-Family (5 or more)</option>
+            </select><br>
+            <label for="yearBuilt">Year Built:</label><br>
+            <select id="yearBuiltInput" name="yearBuilt" required>
+                <option value="">Select</option>
+                <% for (let year = 1900; year <= 2024; year++) { %>
+                    <option value="<%= year %>"><%= year %></option>
+                <% } %>
+            </select><br>
+            <label for="streetAddress">Street Address:</label><br>
+            <input type="text" id="streetAddressInput" name="streetAddress" required><br>
+            <label for="city">City:</label><br>
+            <input type="text" id="cityInput" name="city" required><br>
+            <label for="state">State:</label><br>
+            <input type="text" id="stateInput" name="state" required><br>
+            <label for="zip">Zip:</label><br>
+            <input type="text" id="zipInput" name="zip" required><br>
+            <input type="submit" value="Add Listing">
+        </form>
+    </div>
+    <div id="listingsContainer"></div>
+
+</div>
+
+<script>
+    function addListing(event) {
+    event.preventDefault();
+    // Your existing JavaScript for adding a listing
+    // Extract property details from the form
+    const price = document.getElementById('priceInput').value;
+    const squareFootage = document.getElementById('squareFootageInput').value;
+    const numBedrooms = document.getElementById('numBedroomsInput').value;
+    const numBathrooms = document.getElementById('numBathroomsInput').value;
+    const propertyType = document.getElementById('propertyTypeInput').value;
+    const yearBuilt = document.getElementById('yearBuiltInput').value;
+    
+    // Your existing JavaScript for adding a listing
+    // Extract street address, city, state, and zip from the form
+    const streetAddress = document.getElementById('streetAddressInput').value;
+    const city = document.getElementById('cityInput').value;
+    const state = document.getElementById('stateInput').value;
+    const zip = document.getElementById('zipInput').value;
+    
+    // Combine street address with city, state, and zip
+    // const completeAddress = `${streetAddress}, ${city}, ${state} ${zip}`;
+    
+    // Prepare data for adding listing to Properties table
+    const data = {
+        // Your existing data for adding a listing
+        price: price,
+        squareFootage: squareFootage,
+        numBedrooms: numBedrooms,
+        numBathrooms: numBathrooms,
+        propertyType: propertyType,
+        yearBuilt: yearBuilt,
+        // Add new fields for address
+        streetAddress: streetAddress,
+        city: city,
+        state: state,
+        zip: zip
+    };
+
+    // Your existing fetch request to add a listing
+    // Include the address data
+    fetch('/properties', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error('Failed to add property');
+        }
+    })
+    .then(result => {
+        // Get the propertyId of the added property
+        const propertyId = result.propertyId;
+        
+        // Prepare data for adding listing to UserListings table
+        const userData = {
+            userId: '<%= userid %>', // Assuming userId is available from the server
+            propertyId: propertyId
+        };
+
+        // Your existing fetch request to add a listing to UserListings
+        fetch('/user/listings', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(userData)
+        })
+        .then(response => {
+            if (response.ok) {
+                // Prepare data for adding address to Address table
+                const addressData = {
+                    // Pass the exact same propertyId
+                    streetAddress: streetAddress,
+                    city: city,
+                    state: state,
+                    zipcode: zip,
+                    propertyId: propertyId,
+                };
+                
+                // Your existing fetch request to add an address
+                fetch('/user/address', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(addressData)
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Listing added successfully');
+                        // Optionally, you can perform additional actions here
+                    } else {
+                        throw new Error('Failed to add address');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to add address');
+                });
+            } else {
+                throw new Error('Failed to add listing to UserListings');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to add listing to UserListings');
+        });
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to add property');
+    });
+}
+
+function viewListings() {
+    fetch(`/user/listings?userid=<%= userid %>`)
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error('Failed to fetch user listings');
+        }
+    })
+    .then(data => {
+        const listingsContainer = document.getElementById('listingsContainer');
+        listingsContainer.innerHTML = ''; // Clear previous listings
+        
+        if (data.length > 0) {
+            const ul = document.createElement('ul');
+            data.forEach(property => {
+                const li = document.createElement('li');
+                li.textContent = `Property ID: ${property.propertyId}, Price: ${property.price}, Square Footage: ${property.squareFootage}, Bedrooms: ${property.numBedrooms}, Bathrooms: ${property.numBathrooms}, Type: ${property.propertyType}, Year Built: ${property.yearBuilt}`;
+                ul.appendChild(li);
+            });
+            listingsContainer.appendChild(ul);
+        } else {
+            listingsContainer.innerHTML = 'You have no listings yet.';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to fetch user listings');
+    });
+}
+
+
         function logout() {
             // Perform logout actions here
             alert('Logging out...');
@@ -52,8 +254,8 @@
 
         function backToHome() {
             // Redirect to home page with username in URL
-            window.location.href = '/?username=<%= username %>';
+            window.location.href = '/?username=<%= username %>&userid=<%= userid %>';
         }
-    </script>
+</script>
 </body>
 </html>
