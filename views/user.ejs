@@ -17,13 +17,17 @@
             font-size: 24px;
             margin-bottom: 20px;
         }
-        .logout-btn {
+        .button {
             padding: 10px 20px;
-            background-color: #f44336;
+            margin-right: 10px;
+            background-color: #4CAF50;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+        }
+        .button.logout {
+            background-color: #f44336;
         }
     </style>
 </head>
@@ -34,15 +38,21 @@
         </div>
         <p>This is your user page.</p>
         <p>You can add content here that is specific to the user.</p>
-        <button class="logout-btn" onclick="logout()">Logout</button>
+        <button class="button" onclick="backToHome()">Back to Home</button>
+        <button class="button logout" onclick="logout()">Logout</button>
     </div>
 
     <script>
         function logout() {
             // Perform logout actions here
             alert('Logging out...');
-            // Redirect to login page or perform any other necessary actions
-            window.location.href = '/login';
+            // Redirect to homepage
+            window.location.href = '/';
+        }
+
+        function backToHome() {
+            // Redirect to home page with username in URL
+            window.location.href = '/?username=<%= username %>';
         }
     </script>
 </body>
