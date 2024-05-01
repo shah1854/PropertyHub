@@ -418,7 +418,7 @@ function getValueIndicatorClass(valueComparison) {
                 data.forEach(property => {
                     // Create a container for each property and its buttons
                     fetch('/comparePropertyPriceToAverage', {
-                        method: 'POST',
+                        method: 'GET',
                         headers: {
                             'Content-Type': 'application/json'
                         },
@@ -445,6 +445,7 @@ function getValueIndicatorClass(valueComparison) {
                             <p>Number of Bathrooms: ${property.numBathrooms}</p>
                             <p>Property Type: ${property.propertyType}</p>
                             <p>Year Built: ${property.yearBuilt}</p>
+                            <p>Price Rating: ${property.rating}</p>
                         </div>
                     `;
 
