@@ -23,17 +23,23 @@
             font-size: 24px;
             font-weight: bold;
             margin-bottom: 10px;
-            position: absolute;
+            position: center;
             left: 20px;
             top: 50%;
             transform: translateY(-50%);
         }
 
-        .button-container {
+        .button-container-right {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
             right: 20px;
+        }
+        .button-container-left {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 20px;
         }
 
         .button {
@@ -67,8 +73,10 @@
 <body>
     <div class="header">
         <div class="logo">Property Hub</div>
-        <div class="button-container">
+        <div class="button-container-left">
             <button class="button" onclick="backToHome()">Back to Home</button>
+        </div>
+        <div class="button-container-right">
             <button class="button logout" onclick="logout()">Logout</button>
         </div>
         <div class="welcome-message">Welcome, <%= username %>!</div>
@@ -76,8 +84,6 @@
     <div class="container">
         <p>This is your user page.</p>
         <p>You can manage your listings here.</p>
-    <button class="button" onclick="backToHome()">Back to Home</button>
-    <button class="button logout" onclick="logout()">Logout</button>
     <button class="button" onclick="viewListings()">View Listings</button>
     <button class="button" onclick="viewFavorites()">View Favorites</button>
 
