@@ -126,7 +126,7 @@ app.post('/user/favorites', (req, res) => {
     });
 });
 
-app.get('/comparePropertyPriceToAverage', (req, res) => {
+app.post('/comparePropertyPriceToAverage', (req, res) => {
     const { centerLat, centerLng } = req.body;
 
     // Execute the stored procedure
