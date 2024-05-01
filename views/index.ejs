@@ -417,14 +417,12 @@ function getValueIndicatorClass(valueComparison) {
             } else {
                 data.forEach(property => {
                     // Create a container for each property and its buttons
-                    const propertyContainer = document.createElement('div');
-                    propertyContainer.classList.add('property-container');
                     fetch('/comparePropertyPriceToAverage', {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({ centerLat:property.latitude, centerLng:proper.longitude })
+                        body: JSON.stringify({ centerLat:property.latitude, centerLng:property.longitude })
                     }).then(response => {
                         if (response.ok) {
                         return repsonse.json();
@@ -435,6 +433,8 @@ function getValueIndicatorClass(valueComparison) {
                         property.rating = result[0];
                         console.log(property.rating);
                     });
+                    const propertyContainer = document.createElement('div');
+                    propertyContainer.classList.add('property-container');
                     // Add property details to the container
                     propertyContainer.innerHTML = `
                         <div class="property">
