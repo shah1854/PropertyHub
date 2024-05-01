@@ -216,7 +216,17 @@ app.get('/properties', async (req, res) => {
                         res.status(500).json({ error: 'Error fetching properties within distance' });
                         return;
                     }
-
+                    // For each property, perform reverse geocoding
+                    for (let i = 0; i < results[0].length; i++) {
+                        const property = results[0][i];
+                        const reverseGeocodeResult = await geocoder.reverse({ lat: property.latitude, lon: property.latitude });
+                        if (reverseGeocodeResult.length > 0) {
+                            // Assuming the first result contains the street address
+                            property.address = reverseGeocodeResult[0].formattedAddress;
+                        } else {
+                            property.address = 'Address not found';
+                        }
+                    }
                     // For each property, get the price rating
                     const properties = results[0];
                     for (let property of properties) {
