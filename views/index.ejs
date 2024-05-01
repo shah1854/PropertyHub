@@ -407,7 +407,7 @@ function getValueIndicatorClass(valueComparison) {
    }).toString();
 
 
-    fetch(`/properties?search=${queryParams}`)
+   fetch(`/properties?search=${queryParams}`)
         .then(response => response.json())
         .then(data => {
             let propertyList = document.getElementById('propertyList');
@@ -433,8 +433,8 @@ function getValueIndicatorClass(valueComparison) {
                         }
                     }).then(result => {
                         property.rating = result[0];
+                        console.log(property.rating);
                     });
-                        
                     // Add property details to the container
                     propertyContainer.innerHTML = `
                         <div class="property">
@@ -445,24 +445,25 @@ function getValueIndicatorClass(valueComparison) {
                             <p>Number of Bathrooms: ${property.numBathrooms}</p>
                             <p>Property Type: ${property.propertyType}</p>
                             <p>Year Built: ${property.yearBuilt}</p>
-                            <p>Price Rating: ${property.rating}</p>
                         </div>
                     `;
-                    
+
+                    // Create buttons for each property
+
+                    const favoriteButton = document.createElement('button');
+                    favoriteButton.textContent = 'Add to Favorites';
+                    favoriteButton.classList.add('button');
+                    favoriteButton.addEventListener('click', () => addFavorite(property.propertyId));
+
+                    // Append buttons to the property container
+                    propertyContainer.appendChild(favoriteButton);
+
+                    // Append the property container to the property list
+                    propertyList.appendChild(propertyContainer);
                 });
+
+
             }
-            // Create buttons for each property
-
-            const favoriteButton = document.createElement('button');
-            favoriteButton.textContent = 'Add to Favorites';
-            favoriteButton.classList.add('button');
-            favoriteButton.addEventListener('click', () => addFavorite(property.propertyId));
-                    
-            // Append buttons to the property container
-            propertyContainer.appendChild(favoriteButton);
-
-            // Append the property container to the property list
-            propertyList.appendChild(propertyContainer);
         })
         .catch(error => {
             console.error('Error:', error);
