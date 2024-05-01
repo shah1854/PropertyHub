@@ -40,6 +40,7 @@
     <p>You can manage your listings here.</p>
     <button class="button" onclick="backToHome()">Back to Home</button>
     <button class="button logout" onclick="logout()">Logout</button>
+    <button class="button" onclick="viewListings()">View Listings</button>
 
     <h2>Add New Listing</h2>
     <div id="addListingForm">
@@ -89,6 +90,8 @@
             <input type="submit" value="Add Listing">
         </form>
     </div>
+    <div id="listingsContainer"></div>
+
 </div>
 
 <script>
@@ -207,6 +210,37 @@
     .catch(error => {
         console.error('Error:', error);
         alert('Failed to add property');
+    });
+}
+
+function viewListings() {
+    fetch(`/user/listings?userid=<%= userid %>`)
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error('Failed to fetch user listings');
+        }
+    })
+    .then(data => {
+        const listingsContainer = document.getElementById('listingsContainer');
+        listingsContainer.innerHTML = ''; // Clear previous listings
+        
+        if (data.length > 0) {
+            const ul = document.createElement('ul');
+            data.forEach(property => {
+                const li = document.createElement('li');
+                li.textContent = `Property ID: ${property.propertyId}, Price: ${property.price}, Square Footage: ${property.squareFootage}, Bedrooms: ${property.numBedrooms}, Bathrooms: ${property.numBathrooms}, Type: ${property.propertyType}, Year Built: ${property.yearBuilt}`;
+                ul.appendChild(li);
+            });
+            listingsContainer.appendChild(ul);
+        } else {
+            listingsContainer.innerHTML = 'You have no listings yet.';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to fetch user listings');
     });
 }
 

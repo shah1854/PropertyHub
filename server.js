@@ -253,6 +253,27 @@ app.post('/user/listings', (req, res) => {
     });
 });
 
+// Route to fetch user listings
+app.get('/user/listings', (req, res) => {
+    const userId = req.query.userid; // Retrieve userId from query string if available
+    const sql = `SELECT Properties.* FROM UserListings 
+                 JOIN Properties ON UserListings.propertyId = Properties.propertyId 
+                 WHERE UserListings.userId = ?`;
+
+    db.query(sql, [userId], (err, results) => {
+        if (err) {
+            console.error('Error fetching user listings:', err);
+            res.status(500).json({ error: 'Internal server error' });
+            return;
+        }
+
+        res.json(results); // Send the combined data to the frontend
+    });
+});
+
+
+
+
 app.post('/user/address', async (req, res) => {
     const { streetAddress, city, state, zipcode, propertyId} = req.body;
     const address = `${streetAddress}, ${city}, ${state} ${zipcode}`;
