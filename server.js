@@ -208,23 +208,18 @@ app.get('/properties', async (req, res) => {
 });
 
 
-
-
-
-
-
-// Update a property
+// Update a property price
 app.put('/properties/:propertyId', (req, res) => {
     const propertyId = req.params.propertyId;
-    const { price, squareFootage, numBedrooms, numBathrooms, propertyType, yearBuilt } = req.body;
-    const sql = 'UPDATE Properties SET price = ?, squareFootage = ?, numBedrooms = ?, numBathrooms = ?, propertyType = ?, yearBuilt = ? WHERE propertyId = ?';
-    db.query(sql, [price, squareFootage, numBedrooms, numBathrooms, propertyType, yearBuilt, propertyId], (err, result) => {
+    const { price } = req.body;
+
+    db.query('UPDATE Properties SET price = ? WHERE propertyId = ?', [price, propertyId], (err, result) => {
         if (err) {
             res.status(500).json({ error: err.message });
         } else if (result.affectedRows === 0) {
             res.status(404).json({ message: 'Property not found' });
         } else {
-            res.json({ message: 'Property updated successfully' });
+            res.json({ message: 'Property price updated successfully' });
         }
     });
 });

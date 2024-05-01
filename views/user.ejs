@@ -91,6 +91,7 @@
         </form>
     </div>
     <div id="listingsContainer"></div>
+    <div id="updatePriceFormContainer"></div>
 
 </div>
 
@@ -237,6 +238,12 @@ function viewListings() {
                 deleteButton.textContent = 'Delete';
                 deleteButton.onclick = () => deleteListing(property.propertyId);
                 li.appendChild(deleteButton);
+
+                // Add an update price button for each property
+                const updatePriceButton = document.createElement('button');
+                updatePriceButton.textContent = 'Update Price';
+                updatePriceButton.onclick = () => showUpdatePriceForm(property.propertyId);
+                li.appendChild(updatePriceButton);
                 
                 ul.appendChild(li);
             });
@@ -269,6 +276,60 @@ function deleteListing(propertyId) {
             alert('Failed to delete listing');
         });
     }
+}
+
+function updatePrice(event, propertyId) {
+    event.preventDefault();
+    const newPrice = event.target.elements.newPrice.value;
+    
+    fetch(`/properties/${propertyId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ price: newPrice })
+    })
+    .then(response => {
+        if (response.ok) {
+            alert('Price updated successfully');
+            // Hide the update price form
+            const formContainer = document.getElementById('updatePriceFormContainer');
+            formContainer.innerHTML = ''; // Clear the form
+            // Refresh the listings after successful update
+            viewListings();
+        } else {
+            throw new Error('Failed to update price');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to update price');
+    });
+}
+
+
+function showUpdatePriceForm(propertyId) {
+    const formContainer = document.getElementById('updatePriceFormContainer');
+    formContainer.innerHTML = ''; // Clear previous form if any
+    
+    const form = document.createElement('form');
+    form.onsubmit = (event) => updatePrice(event, propertyId);
+    
+    const priceLabel = document.createElement('label');
+    priceLabel.textContent = 'New Price:';
+    form.appendChild(priceLabel);
+    
+    const priceInput = document.createElement('input');
+    priceInput.type = 'text';
+    priceInput.name = 'newPrice';
+    form.appendChild(priceInput);
+    
+    const submitButton = document.createElement('button');
+    submitButton.type = 'submit';
+    submitButton.textContent = 'Update Price';
+    form.appendChild(submitButton);
+    
+    formContainer.appendChild(form);
 }
 
 
