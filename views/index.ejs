@@ -415,8 +415,8 @@ function getValueIndicatorClass(valueComparison) {
             if (data.length === 0) {
                 propertyList.innerHTML = '<p>No properties found.</p>';
             } else {
+                property.rating = null;
                 data.forEach(property => {
-                    // Create a container for each property and its buttons
                     fetch('/comparePropertyPriceToAverage', {
                         method: 'GET',
                         headers: {
@@ -433,6 +433,7 @@ function getValueIndicatorClass(valueComparison) {
                         property.rating = result[0];
                         console.log(property.rating);
                     });
+                    // Create a container for each property and its buttons
                     const propertyContainer = document.createElement('div');
                     propertyContainer.classList.add('property-container');
                     // Add property details to the container
