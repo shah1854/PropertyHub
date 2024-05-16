@@ -1,1 +1,2 @@
-# Team061-PropertyHub
+# PropertyHub
+The Real Estate Listings Website project aims to create a dynamic online platform for property buyers, sellers, and real estate agents to interact and facilitate property transactions. The website will feature a user-friendly interface allowing users to search for properties based on various criteria such as location, price range, and property type. Each property listing will include detailed information such as address, photos, amenities, and contact details for the listing agent. The front end will be developed using HTML, CSS, and JavaScript. The Database Management System will be developed using MySQL. All of this will be connected using Express.js and Node.js.
